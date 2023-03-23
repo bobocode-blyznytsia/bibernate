@@ -1,8 +1,8 @@
 package com.bobocode.blyznytsia.bibernate.util;
 
-import lombok.experimental.UtilityClass;
+import java.sql.ResultSet;
 
-@UtilityClass
-public class ResultSetMapper {
+public interface ResultSetMapper {
+  <T> T mapToEntity(ResultSet rs, Class<T> entityType);
 
 }
