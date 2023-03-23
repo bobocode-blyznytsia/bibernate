@@ -1,0 +1,14 @@
+package com.bobocode.blyznytsia.bibernate.testdata.entity;
+
+import com.bobocode.blyznytsia.bibernate.annotation.Column;
+import com.bobocode.blyznytsia.bibernate.annotation.Id;
+import com.bobocode.blyznytsia.bibernate.annotation.Table;
+
+@Table(name = "custom_entity_table_name")
+public class AnnotatedSampleEntity {
+  @Id
+  Long id;
+
+  @Column(name = "custom_column_name")
+  String someValue;
+}
