@@ -10,6 +10,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SampleEntity {
   @Id
-  Long id;
-  String someValue;
+  private Long id;
+  private String someValue;
 }
