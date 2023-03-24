@@ -112,7 +112,6 @@ public class EntityPersisterImpl implements EntityPersister {
     var idField = resolveEntityIdField(entity.getClass());
     idField.setAccessible(true);
     var idValue = idField.get(entity);
-    idField.setAccessible(false);
     if (idValue == null) {
       throw new RuntimeException("А-я-яй, більше так не роби");
     }
@@ -130,12 +129,10 @@ public class EntityPersisterImpl implements EntityPersister {
       var field = nonIdFields.get(i);
       field.setAccessible(true);
       statement.setObject(i + 1, field.get(entity));
-      field.setAccessible(false);
     }
     var idField = resolveEntityIdField(entity.getClass());
     idField.setAccessible(true);
     statement.setObject(nonIdFields.size() + 1, idField.get(entity));
-    idField.setAccessible(false);
   }
 
   @SneakyThrows
@@ -147,7 +144,6 @@ public class EntityPersisterImpl implements EntityPersister {
       var field = nonIdFields.get(i);
       field.setAccessible(true);
       statement.setObject(i + 1, field.get(entity));
-      field.setAccessible(false);
     }
   }
 
@@ -161,8 +157,6 @@ public class EntityPersisterImpl implements EntityPersister {
       idField.set(entity, id);
     } catch (ReflectiveOperationException e) {
       throw new RuntimeException("We're screwed", e);
-    } finally {
-      idField.setAccessible(false);
     }
   }
 
