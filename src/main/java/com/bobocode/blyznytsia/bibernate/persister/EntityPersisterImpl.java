@@ -123,7 +123,6 @@ public class EntityPersisterImpl implements EntityPersister {
   @SneakyThrows
   private void fillUpdateWildCards(PreparedStatement statement, Object entity) {
     var nonIdFields = getEntityNonIdFields(entity.getClass()).stream()
-        .filter(field -> !field.isAnnotationPresent(Id.class))//@Todo: remove and see what happen
         .toList();
     for (int i = 0; i < nonIdFields.size(); i++) {
       var field = nonIdFields.get(i);
@@ -138,7 +137,6 @@ public class EntityPersisterImpl implements EntityPersister {
   @SneakyThrows
   private void fillInsertWildCards(PreparedStatement statement, Object entity) {
     var nonIdFields = getEntityNonIdFields(entity.getClass()).stream()
-        .filter(field -> !field.isAnnotationPresent(Id.class))//@Todo: remove and see what happen
         .toList();
     for (int i = 0; i < nonIdFields.size(); i++) {
       var field = nonIdFields.get(i);
