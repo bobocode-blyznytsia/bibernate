@@ -12,6 +12,7 @@ class CaseUtilTest {
     assertEquals("field_uppercase_abbreviation", CaseUtil.camelToSnakeCase("fieldUppercaseABBREVIATION"));
   }
 
+  @Test
   void camelToSnakeCaseConvertingClassNames(){
     assertEquals("some_class",                   CaseUtil.camelToSnakeCase("SomeClass"));
     assertEquals("some_class_but_longer",        CaseUtil.camelToSnakeCase("SomeClassButLonger"));

@@ -3,7 +3,7 @@ package com.bobocode.blyznytsia.bibernate.testdata.entity;
 import com.bobocode.blyznytsia.bibernate.annotation.Entity;
 
 @Entity
-public class EntityWithNoId {
+public class EntityWithoutId {
   // @Id annotation is missing on purpose
-  Long id;
+  private Long id;
 }

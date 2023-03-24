@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.bobocode.blyznytsia.bibernate.exception.MalformedEntityException;
 import com.bobocode.blyznytsia.bibernate.testdata.entity.AnnotatedSampleEntity;
 import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWIthMultipleNonIdFields;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithNoId;
+import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithMultipleIds;
+import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithoutId;
 import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -41,16 +42,21 @@ class EntityUtilTest {
   }
 
   @Test
-  void resolveEntityIdFieldShouldThrowMalformedEntityException() {
-    assertThrows(MalformedEntityException.class, () -> EntityUtil.resolveEntityIdField(EntityWithNoId.class));
+  void resolveEntityIdFieldShouldThrowMalformedEntityExceptionWhenNoIdFound() {
+    assertThrows(MalformedEntityException.class, () -> EntityUtil.resolveEntityIdField(EntityWithoutId.class));
+  }
+
+  @Test
+  void resolveEntityIdFieldShouldThrowMalformedEntityExceptionWhenMultipleIdFound() {
+    assertThrows(MalformedEntityException.class, () -> EntityUtil.resolveEntityIdField(EntityWithMultipleIds.class));
   }
 
   @Test
   void getEntityNonIdFields() {
-    var expectedField = Arrays.stream(EntityWIthMultipleNonIdFields.class.getDeclaredFields())
+    var expectedFields = Arrays.stream(EntityWIthMultipleNonIdFields.class.getDeclaredFields())
         .filter(field -> ! field.getName().equals("id"))
         .toList();
     var actualNonIdFields = EntityUtil.getEntityNonIdFields(EntityWIthMultipleNonIdFields.class);
-    assertEquals(expectedField, actualNonIdFields);
+    assertEquals(expectedFields, actualNonIdFields);
   }
 }

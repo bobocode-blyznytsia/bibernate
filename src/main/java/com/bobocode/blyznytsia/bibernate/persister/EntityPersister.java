@@ -13,7 +13,7 @@ public interface EntityPersister {
 
   <T> T insert(T entity);
 
-  <T> T update(T entity);
+  void update(Object entity);
 
-  <T> T delete(T entity);
+  void delete(Object entity);
 }

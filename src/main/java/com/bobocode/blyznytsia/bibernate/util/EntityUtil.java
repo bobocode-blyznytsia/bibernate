@@ -23,11 +23,18 @@ public class EntityUtil {
   }
 
   public static Field resolveEntityIdField(Class<?> entityType) {
-    return Arrays.stream(entityType.getDeclaredFields())
+    var idFields = Arrays.stream(entityType.getDeclaredFields())
         .filter(field -> field.isAnnotationPresent(Id.class))
-        .findFirst()
-        .orElseThrow(() -> new MalformedEntityException("Entity of type " + entityType.getSimpleName()
-            + " must contain a primary key field annotated with @Id"));
+        .toList();
+    if (idFields.isEmpty()) {
+      throw new MalformedEntityException("Entity of type " + entityType.getSimpleName()
+          + " must contain a primary key field annotated with @Id");
+    }
+    if (idFields.size() > 1) {
+      throw new MalformedEntityException("Entity of type " + entityType.getSimpleName()
+          + " must contain only one @Id field");
+    }
+    return idFields.get(0);
   }
 
   public static String resolveFieldColumnName(Field field) {

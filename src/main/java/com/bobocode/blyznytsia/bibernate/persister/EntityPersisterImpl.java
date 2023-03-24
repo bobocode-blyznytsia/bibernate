@@ -82,7 +82,7 @@ public class EntityPersisterImpl implements EntityPersister {
     }
   }
 
-  public <T> T update(T entity) {
+  public void update(Object entity) {
     Objects.requireNonNull(entity);
     var updateStatementText = buildUpdateStatement(entity.getClass());
     try (var statement = connection.prepareStatement(updateStatementText)) { //@Todo: see if we can optimize try stmts
@@ -91,11 +91,10 @@ public class EntityPersisterImpl implements EntityPersister {
     } catch (SQLException e) {
       throw new PersistenceException("Failed executing UPDATE statement", e);
     }
-    return entity;
   }
 
   @Override
-  public <T> T delete(T entity) {
+  public void delete(Object entity) {
     Objects.requireNonNull(entity);
     var deleteStatementText = buildDeleteStatement(entity.getClass());
     try (var statement = connection.prepareStatement(deleteStatementText)) {
@@ -104,7 +103,6 @@ public class EntityPersisterImpl implements EntityPersister {
     } catch (SQLException e) {
       throw new PersistenceException("Failed executing DELETE statement", e);
     }
-    return entity;
   }
 
   @SneakyThrows
