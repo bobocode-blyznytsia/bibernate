@@ -50,7 +50,7 @@ class EntityUtilTest {
     var expectedField = Arrays.stream(EntityWIthMultipleNonIdFields.class.getDeclaredFields())
         .filter(field -> ! field.getName().equals("id"))
         .toList();
-    var actualNonIdFields = EntityUtil.getEntityNonIdFields(new EntityWIthMultipleNonIdFields());
+    var actualNonIdFields = EntityUtil.getEntityNonIdFields(EntityWIthMultipleNonIdFields.class);
     assertEquals(expectedField, actualNonIdFields);
   }
 }

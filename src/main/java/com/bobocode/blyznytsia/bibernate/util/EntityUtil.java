@@ -36,8 +36,8 @@ public class EntityUtil {
         .orElse(camelToSnakeCase(field.getName()));
   }
 
-  public static List<Field> getEntityNonIdFields(Object entity) {
-    return Arrays.stream(entity.getClass().getDeclaredFields())
+  public static List<Field> getEntityNonIdFields(Class<?> entityType) {
+    return Arrays.stream(entityType.getDeclaredFields())
         .filter(field -> !field.isAnnotationPresent(Id.class))
         .toList();
   }
