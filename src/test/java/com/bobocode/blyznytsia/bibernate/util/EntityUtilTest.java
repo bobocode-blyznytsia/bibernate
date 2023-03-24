@@ -45,19 +45,18 @@ class EntityUtilTest {
   void resolveEntityIdFieldShouldThrowMalformedEntityExceptionWhenNoIdFound() {
     assertThrows(MalformedEntityException.class, () -> EntityUtil.resolveEntityIdField(EntityWithoutId.class));
   }
+
   @Test
   void resolveEntityIdFieldShouldThrowMalformedEntityExceptionWhenMultipleIdFound() {
     assertThrows(MalformedEntityException.class, () -> EntityUtil.resolveEntityIdField(EntityWithMultipleIds.class));
   }
-
-
 
   @Test
   void getEntityNonIdFields() {
     var expectedFields = Arrays.stream(EntityWIthMultipleNonIdFields.class.getDeclaredFields())
         .filter(field -> ! field.getName().equals("id"))
         .toList();
-    var actualNonIdFields = EntityUtil.getEntityNonIdFields(new EntityWIthMultipleNonIdFields());
+    var actualNonIdFields = EntityUtil.getEntityNonIdFields(EntityWIthMultipleNonIdFields.class);
     assertEquals(expectedFields, actualNonIdFields);
   }
 }
