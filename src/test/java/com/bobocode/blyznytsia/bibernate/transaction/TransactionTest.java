@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
+import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
@@ -56,14 +56,13 @@ class TransactionTest {
     assertThrows(IllegalStateException.class, () -> transaction.commit());
   }
 
-
   @Test
   void commitTransactionFailedTest() throws SQLException {
     transaction.begin();
 
     doThrow(new SQLException()).when(connection).commit();
 
-    assertThrows(TransactionException.class, () -> transaction.commit());
+    assertThrows(BibernateException.class, () -> transaction.commit());
     assertEquals(FAILED_COMMIT, transaction.getStatus());
   }
 
@@ -76,14 +75,13 @@ class TransactionTest {
     assertEquals(ROLLED_BACK, transaction.getStatus());
   }
 
-
   @Test
   void rollbackTransactionFailedTest() throws SQLException {
     transaction.begin();
 
     doThrow(new SQLException()).when(connection).rollback();
 
-    assertThrows(TransactionException.class, () -> transaction.rollback());
+    assertThrows(BibernateException.class, () -> transaction.rollback());
     assertEquals(FAILED_ROLLBACK, transaction.getStatus());
   }
 

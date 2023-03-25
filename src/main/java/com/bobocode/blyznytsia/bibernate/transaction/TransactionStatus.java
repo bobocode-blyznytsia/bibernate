@@ -33,4 +33,5 @@ public enum TransactionStatus {
      * The transaction attempted to rollback, but failed.
      */
     FAILED_ROLLBACK
+
 }

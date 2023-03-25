@@ -32,4 +32,5 @@ public interface Transaction {
    * @return boolean indicating whether transaction is in progress
    */
   boolean isActive();
+
 }
