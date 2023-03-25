@@ -1,6 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.transaction;
 
-import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
+import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class TransactionImpl implements Transaction {
       connection.setAutoCommit(false);
       status = TransactionStatus.ACTIVE;
     } catch (SQLException e) {
-      throw new BibernateException("Error occurred while transaction beginning", e);
+      throw new TransactionException("Error occurred while transaction beginning", e);
     }
   }
 
@@ -54,7 +54,7 @@ public class TransactionImpl implements Transaction {
       status = TransactionStatus.COMMITTED;
     } catch (SQLException e) {
       status = TransactionStatus.FAILED_COMMIT;
-      throw new BibernateException("Error occurred while transaction committing", e);
+      throw new TransactionException("Error occurred while transaction committing", e);
     }
   }
 
@@ -75,7 +75,7 @@ public class TransactionImpl implements Transaction {
       status = TransactionStatus.ROLLED_BACK;
     } catch (SQLException e) {
       status = TransactionStatus.FAILED_ROLLBACK;
-      throw new BibernateException("Error occurred while transaction rollback", e);
+      throw new TransactionException("Error occurred while transaction rollback", e);
     }
 
   }

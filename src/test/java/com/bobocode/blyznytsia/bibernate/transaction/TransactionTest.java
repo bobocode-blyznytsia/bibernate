@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
-import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
+import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class TransactionTest {
 
     doThrow(new SQLException()).when(connection).commit();
 
-    assertThrows(BibernateException.class, () -> transaction.commit());
+    assertThrows(TransactionException.class, () -> transaction.commit());
     assertEquals(FAILED_COMMIT, transaction.getStatus());
   }
 
@@ -81,7 +81,7 @@ class TransactionTest {
 
     doThrow(new SQLException()).when(connection).rollback();
 
-    assertThrows(BibernateException.class, () -> transaction.rollback());
+    assertThrows(TransactionException.class, () -> transaction.rollback());
     assertEquals(FAILED_ROLLBACK, transaction.getStatus());
   }
 
