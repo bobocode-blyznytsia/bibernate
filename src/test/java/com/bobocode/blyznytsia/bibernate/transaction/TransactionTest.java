@@ -89,4 +89,5 @@ class TransactionTest {
   void rollbackNotActiveTransaction() {
     assertThrows(IllegalStateException.class, () -> transaction.rollback());
   }
+
 }
