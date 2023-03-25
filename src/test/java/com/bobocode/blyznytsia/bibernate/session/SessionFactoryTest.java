@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,8 +55,8 @@ class SessionFactoryTest {
     SessionFactoryImpl sessionFactory = spy(new SessionFactoryImpl(dataSource));
     sessionFactory.close();
 
-    IllegalStateException exception = assertThrows(
-        IllegalStateException.class,
+    BibernateException exception = assertThrows(
+        BibernateException.class,
         sessionFactory::openSession
     );
 

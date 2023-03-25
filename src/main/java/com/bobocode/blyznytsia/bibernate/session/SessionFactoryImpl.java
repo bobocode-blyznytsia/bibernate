@@ -1,5 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.session;
 
+import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.transaction.Transaction;
 import java.util.HashSet;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class SessionFactoryImpl implements SessionFactory {
   public Session openSession() {
     log.trace("Opening the new session");
     if (!isOpen()) {
-      throw new IllegalStateException("SessionFactory is closed");
+      throw new BibernateException("SessionFactory is closed");
     }
     Session newSession = new SessionImpl(this, dataSource, this::removeSession);
     sessions.add(newSession);

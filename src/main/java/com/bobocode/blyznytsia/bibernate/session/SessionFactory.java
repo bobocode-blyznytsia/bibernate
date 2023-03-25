@@ -14,7 +14,7 @@ public interface SessionFactory {
   Session openSession();
 
   /**
-   * Returns the if {@link SessionFactory} is open.
+   * Returns true if {@link SessionFactory} is open.
    * Returns true until the factory has been closed.
    *
    * @return boolean indicating whether the factory is open
