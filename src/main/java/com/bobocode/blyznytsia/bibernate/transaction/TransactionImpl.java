@@ -1,5 +1,12 @@
 package com.bobocode.blyznytsia.bibernate.transaction;
 
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.ACTIVE;
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.COMMITTED;
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.FAILED_COMMIT;
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.FAILED_ROLLBACK;
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.NOT_ACTIVE;
+import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.ROLLED_BACK;
+
 import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,7 +23,7 @@ public class TransactionImpl implements Transaction {
 
   public TransactionImpl(Connection connection) {
     this.connection = connection;
-    this.status = TransactionStatus.NOT_ACTIVE;
+    this.status = NOT_ACTIVE;
   }
 
   /**
@@ -26,13 +33,13 @@ public class TransactionImpl implements Transaction {
    */
   @Override
   public void begin() {
-    if (status == TransactionStatus.ACTIVE) {
+    if (status == ACTIVE) {
       throw new IllegalStateException("Transaction is already active");
     }
     log.debug("Begin transaction");
     try {
       connection.setAutoCommit(false);
-      status = TransactionStatus.ACTIVE;
+      status = ACTIVE;
     } catch (SQLException e) {
       throw new TransactionException("Error occurred while transaction beginning", e);
     }
@@ -45,15 +52,15 @@ public class TransactionImpl implements Transaction {
    */
   @Override
   public void commit() {
-    if (status != TransactionStatus.ACTIVE) {
+    if (status != ACTIVE) {
       throw new IllegalStateException("Can't commit not active transaction");
     }
     log.debug("Commit transaction");
     try {
       connection.commit();
-      status = TransactionStatus.COMMITTED;
+      status = COMMITTED;
     } catch (SQLException e) {
-      status = TransactionStatus.FAILED_COMMIT;
+      status = FAILED_COMMIT;
       throw new TransactionException("Error occurred while transaction committing", e);
     }
   }
@@ -72,12 +79,11 @@ public class TransactionImpl implements Transaction {
     log.debug("Rollback transaction");
     try {
       connection.rollback();
-      status = TransactionStatus.ROLLED_BACK;
+      status = ROLLED_BACK;
     } catch (SQLException e) {
-      status = TransactionStatus.FAILED_ROLLBACK;
+      status = FAILED_ROLLBACK;
       throw new TransactionException("Error occurred while transaction rollback", e);
     }
-
   }
 
   /**
@@ -87,7 +93,7 @@ public class TransactionImpl implements Transaction {
    */
   @Override
   public boolean isActive() {
-    return TransactionStatus.ACTIVE == getStatus();
+    return ACTIVE == getStatus();
   }
 
   public TransactionStatus getStatus() {
@@ -95,7 +101,7 @@ public class TransactionImpl implements Transaction {
   }
 
   private boolean canRollback() {
-    return status == TransactionStatus.ACTIVE || status == TransactionStatus.FAILED_COMMIT;
+    return status == ACTIVE || status == FAILED_COMMIT;
   }
 
 }
