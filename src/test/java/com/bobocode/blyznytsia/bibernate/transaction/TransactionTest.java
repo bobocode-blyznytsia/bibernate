@@ -21,11 +21,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionTest {
-  @InjectMocks
-  public TransactionImpl transaction;
-
   @Mock
   private Connection connection;
+  @InjectMocks
+  public TransactionImpl transaction;
 
   @Test
   void beginTransactionTest() throws SQLException {
@@ -39,7 +38,9 @@ class TransactionTest {
   void beginTransactionWhenTransactionAlreadyActiveTest() {
     transaction.begin();
 
-    assertThrows(IllegalStateException.class, () -> transaction.begin());
+    IllegalStateException exception =
+        assertThrows(IllegalStateException.class, () -> transaction.begin());
+    assertEquals("Transaction is already active", exception.getMessage());
   }
 
   @Test
@@ -53,7 +54,9 @@ class TransactionTest {
 
   @Test
   void commitNotActiveTransactionTest() {
-    assertThrows(IllegalStateException.class, () -> transaction.commit());
+    IllegalStateException exception =
+        assertThrows(IllegalStateException.class, () -> transaction.commit());
+    assertEquals("Can't commit not active transaction", exception.getMessage());
   }
 
   @Test
@@ -87,7 +90,8 @@ class TransactionTest {
 
   @Test
   void rollbackNotActiveTransaction() {
-    assertThrows(IllegalStateException.class, () -> transaction.rollback());
+    IllegalStateException exception =
+        assertThrows(IllegalStateException.class, () -> transaction.rollback());
+        assertEquals("Cannot rollback transaction with status NOT_ACTIVE", exception.getMessage());
   }
-
 }

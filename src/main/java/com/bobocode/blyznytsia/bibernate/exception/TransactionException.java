@@ -22,5 +22,4 @@ public class TransactionException extends BibernateException {
   public TransactionException(String message) {
     super(message);
   }
-
 }
