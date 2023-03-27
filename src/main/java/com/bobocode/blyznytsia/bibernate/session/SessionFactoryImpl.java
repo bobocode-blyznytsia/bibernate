@@ -17,13 +17,14 @@ public class SessionFactoryImpl implements SessionFactory {
 
   private final DataSource dataSource;
   private final Set<Session> sessions;
-  private boolean opened = true;
+  private boolean opened;
 
   public SessionFactoryImpl(DataSource dataSource) {
     log.debug("Initializing SessionFactory");
     Objects.requireNonNull(dataSource, "DataSource must not be null");
     this.dataSource = dataSource;
     this.sessions = ConcurrentHashMap.newKeySet();
+    this.opened = true;
     log.debug("SessionFactory initialized");
   }
 
