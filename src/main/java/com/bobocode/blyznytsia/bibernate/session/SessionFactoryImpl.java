@@ -1,8 +1,10 @@
 package com.bobocode.blyznytsia.bibernate.session;
 
 import javax.sql.DataSource;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class SessionFactoryImpl implements SessionFactory {
 

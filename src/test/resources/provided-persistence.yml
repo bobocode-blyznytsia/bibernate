@@ -1,0 +1,14 @@
+persistenceUnits:
+  - name: h2
+    dataSource:
+      jdbcUrl: jdbc:h2:mem:testdb
+      userName: sa
+      password: password
+      driverClassName: org.h2.Driver
+
+  - name: postgres
+    dataSource:
+      jdbcUrl: jdbc:postgresql://localhost:5432/postgres
+      userName: postgres
+      password: postgres
+      driverClassName: org.postgresql.Driver"
