@@ -94,4 +94,5 @@ class TransactionTest {
         assertThrows(IllegalStateException.class, () -> transaction.rollback());
         assertEquals("Cannot rollback transaction with status NOT_ACTIVE", exception.getMessage());
   }
+
 }
