@@ -103,5 +103,4 @@ public class TransactionImpl implements Transaction {
   private boolean canRollback() {
     return status == ACTIVE || status == FAILED_COMMIT;
   }
-
 }
