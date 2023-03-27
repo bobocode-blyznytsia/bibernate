@@ -2,6 +2,8 @@ package com.bobocode.blyznytsia.bibernate.session;
 
 import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.transaction.Transaction;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,7 +17,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
   private final DataSource dataSource;
   private final Set<Session> sessions;
-  private boolean closed = false;
+  private boolean opened = true;
 
   public SessionFactoryImpl(DataSource dataSource) {
     log.debug("Initializing SessionFactory");
@@ -28,7 +30,7 @@ public class SessionFactoryImpl implements SessionFactory {
   // TODO VS: Change to real implementation
   @Override
   public Session openSession() {
-    log.trace("Opening the new session");
+    log.debug("Opening the new Session");
     if (!isOpen()) {
       throw new BibernateException("SessionFactory is closed");
     }
@@ -39,27 +41,36 @@ public class SessionFactoryImpl implements SessionFactory {
 
   @Override
   public boolean isOpen() {
-    return !closed;
+    return opened;
   }
 
   @Override
   public void close() {
-    log.trace("Closing SessionFactory");
-    log.trace("Closing Sessions which are opened");
+    log.debug("Closing SessionFactory");
+    log.debug("Closing Sessions");
     sessions.forEach(Session::close);
     sessions.clear();
-    // TODO VS: close dataSource
-    closed = true;
-    log.trace("SessionFactory is closed");
+    closeDataSource();
+    opened = false;
+    log.debug("SessionFactory is closed");
   }
 
   public void removeSession(Session session) {
-    log.trace("Removing session from internal collection. {}", session);
+    log.debug("Removing Session from internal collection. {}", session);
     sessions.remove(session);
   }
 
   Set<Session> getSessions() {
     return new HashSet<>(sessions);
+  }
+
+  private void closeDataSource() {
+    try {
+      var unwrappedDataSource = dataSource.unwrap(HikariDataSource.class);
+      unwrappedDataSource.close();
+    } catch (SQLException ex) {
+      throw new BibernateException("Exception during closing DataSource", ex);
+    }
   }
 
   // TODO VS: remove

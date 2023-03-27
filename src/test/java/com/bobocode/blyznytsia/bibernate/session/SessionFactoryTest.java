@@ -5,14 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,11 +25,12 @@ class SessionFactoryTest {
   private Session session;
   @Mock
   private DataSource dataSource;
+  @Mock
+  private HikariDataSource hikariDataSource;
 
   @Test
   void createsSessionFactory() {
     var sessionFactory = new SessionFactoryImpl(dataSource);
-    assertNotNull(sessionFactory);
     assertTrue(sessionFactory.isOpen());
   }
 
@@ -41,8 +45,7 @@ class SessionFactoryTest {
 
   @Test
   void opensNewSession() {
-    SessionFactoryImpl sessionFactory = spy(new SessionFactoryImpl(dataSource));
-    when(sessionFactory.openSession()).thenReturn(session);
+    SessionFactoryImpl sessionFactory = new SessionFactoryImpl(dataSource);
 
     Session session = sessionFactory.openSession();
 
@@ -51,8 +54,10 @@ class SessionFactoryTest {
   }
 
   @Test
-  void throwsExceptionIfSessionFactoryIsClosed() {
-    SessionFactoryImpl sessionFactory = spy(new SessionFactoryImpl(dataSource));
+  void throwsExceptionIfSessionFactoryIsClosed() throws SQLException {
+    when(dataSource.unwrap(Mockito.eq(HikariDataSource.class)))
+        .thenReturn(hikariDataSource);
+    SessionFactoryImpl sessionFactory = new SessionFactoryImpl(dataSource);
     sessionFactory.close();
 
     BibernateException exception = assertThrows(
@@ -64,12 +69,29 @@ class SessionFactoryTest {
   }
 
   @Test
-  void closesSessionFactory() {
+  void closesSessionFactory() throws SQLException {
+    when(dataSource.unwrap(Mockito.eq(HikariDataSource.class)))
+        .thenReturn(hikariDataSource);
     SessionFactoryImpl sessionFactory = new SessionFactoryImpl(dataSource);
     sessionFactory.close();
 
     assertFalse(sessionFactory.isOpen());
     assertTrue(sessionFactory.getSessions().isEmpty());
+  }
+
+  @Test
+  void throwsExceptionOnDataSourceClose() throws SQLException {
+    when(dataSource.unwrap(Mockito.eq(HikariDataSource.class)))
+        .thenReturn(hikariDataSource);
+    doThrow(SQLException.class).when(hikariDataSource).close();
+    SessionFactoryImpl sessionFactory = new SessionFactoryImpl(dataSource);
+
+    BibernateException exception = assertThrows(
+        BibernateException.class,
+        sessionFactory::close
+    );
+
+    assertEquals("Exception during closing DataSource", exception.getMessage());
   }
 
   @Test

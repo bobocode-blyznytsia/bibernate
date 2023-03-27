@@ -22,7 +22,7 @@ public interface SessionFactory {
   boolean isOpen();
 
   /**
-   * Closing {@link SessionFactory} and all acquired sessions
+   * Closes {@link SessionFactory} and all acquired sessions
    */
   void close();
 
