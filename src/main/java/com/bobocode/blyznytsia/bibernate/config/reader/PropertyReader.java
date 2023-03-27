@@ -1,7 +1,8 @@
 package com.bobocode.blyznytsia.bibernate.config.reader;
 
-import com.bobocode.blyznytsia.bibernate.config.PersistenceConfiguration;
 import static com.bobocode.blyznytsia.bibernate.config.PersistenceConfiguration.PersistenceUnitConfiguration;
+
+import com.bobocode.blyznytsia.bibernate.config.PersistenceConfiguration;
 
 /**
  * Reads a configuration file and creates a {@link PersistenceConfiguration},
