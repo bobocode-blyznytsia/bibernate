@@ -118,7 +118,9 @@
                 </executions>
                 <configuration>
                     <excludes>
-<!--                        USE THIS SECTION WHENEVER YOU WANT TO EXCLUDE A CLASS FROM COVERAGE -->
+                        <exclude>com/bobocode/blyznytsia/bibernate/exception/**</exclude>
+                        <exclude>com/bobocode/blyznytsia/bibernate/annotation/**</exclude>
+                        <exclude>com/bobocode/blyznytsia/bibernate/model/**</exclude>
                     </excludes>
                     <rules>
                         <rule>
