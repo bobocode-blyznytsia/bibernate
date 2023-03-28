@@ -7,7 +7,6 @@ import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildInsertStatemen
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildSelectStatement;
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildUpdateStatement;
 
-import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementConsumer;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementFunction;
@@ -63,6 +62,9 @@ public class EntityPersisterImpl implements EntityPersister {
 
   @Override
   public <T> Optional<T> findById(Class<T> entityType, Object id) {
+    if (id == null) {
+      throw new IllegalArgumentException("Id must not be null");
+    }
     return findOneBy(entityType, EntityUtil.resolveEntityIdField(entityType), id);
   }
 
@@ -98,7 +100,7 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   private void performWithinStatement(String statement, StatementConsumer consumer) {
-    performWithinStatement(statement, false, consumer );
+    performWithinStatement(statement, false, consumer);
   }
 
   private <T> T performWithinStatement(String statementText, boolean generatedKeys, StatementFunction<T> function) {
@@ -119,13 +121,17 @@ public class EntityPersisterImpl implements EntityPersister {
   private <T> void fillDeleteStatement(PreparedStatement statement, T entity) throws SQLException {
     var id = getEntityIdValue(entity);
     if (id == null) {
-      throw new BibernateException("Cannot delete transient entity");
+      throw new PersistenceException("Cannot delete transient entity");
     }
     fillStmtWildcards(statement, id);
   }
 
   private void fillUpdateStatement(PreparedStatement statement, Object entity) throws SQLException {
-    var allWildcardFields = new ArrayList<Object>(getEntityNonIdValues(entity));
+    var allWildcardFields = new ArrayList<>(getEntityNonIdValues(entity));
+    var id = getEntityIdValue(entity);
+    if (id == null) {
+      throw new PersistenceException("Cannot update transient entity");
+    }
     allWildcardFields.add(getEntityIdValue(entity));
     fillStmtWildcards(statement, allWildcardFields.toArray());
   }
@@ -140,7 +146,7 @@ public class EntityPersisterImpl implements EntityPersister {
     }
   }
 
-  private void setGeneratedId(Object entity, ResultSet generatedKeysRs) throws SQLException {
+  private void setGeneratedId(Object entity, ResultSet generatedKeysRs) throws SQLException { //@Todo: throw illegalt
     generatedKeysRs.next();
     var id = generatedKeysRs.getObject(1);
     var idField = EntityUtil.resolveEntityIdField(entity.getClass());
@@ -151,9 +157,6 @@ public class EntityPersisterImpl implements EntityPersister {
       throw new PersistenceException("Unable to assign a generated key for the entity", e);
     }
   }
-
-
-
 
 
 }
