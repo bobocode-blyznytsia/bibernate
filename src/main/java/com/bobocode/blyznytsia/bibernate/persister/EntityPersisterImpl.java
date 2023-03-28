@@ -1,14 +1,16 @@
 package com.bobocode.blyznytsia.bibernate.persister;
 
-import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.getEntityNonIdFields;
-import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.resolveEntityIdField;
+import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.getEntityIdValue;
+import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.getEntityNonIdValues;
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildDeleteStatement;
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildInsertStatement;
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildSelectStatement;
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildUpdateStatement;
 
-import com.bobocode.blyznytsia.bibernate.annotation.Id;
+import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
+import com.bobocode.blyznytsia.bibernate.lambda.StatementConsumer;
+import com.bobocode.blyznytsia.bibernate.lambda.StatementFunction;
 import com.bobocode.blyznytsia.bibernate.util.EntityUtil;
 import com.bobocode.blyznytsia.bibernate.util.ResultSetMapper;
 import java.lang.reflect.Field;
@@ -21,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -40,19 +41,16 @@ public class EntityPersisterImpl implements EntityPersister {
   public <T> List<T> findAll(Class<T> entityType, Field key, Object value) {
     var entities = new ArrayList<T>();
     var statementText = buildSelectStatement(entityType, key);
-    log.debug(statementText);
-
-    try (var statement = connection.prepareStatement(statementText)) {
-      statement.setObject(1, value);
+    return performWithinStatement(statementText, false, statement -> {
+      fillSelectStatement(statement, value);
       var rs = statement.executeQuery();
       while (rs.next()) {
         entities.add(resultSetMapper.mapToEntity(rs, entityType));
       }
       return entities;
-    } catch (SQLException e) {
-      throw new PersistenceException("Failed executing SELECT statement", e);
-    }
+    });
   }
+
 
   @Override
   public <T> Optional<T> findOneBy(Class<T> entityType, Field key, Object value) {
@@ -72,77 +70,75 @@ public class EntityPersisterImpl implements EntityPersister {
   public <T> T insert(T entity) {
     Objects.requireNonNull(entity);
     var insertStatementText = buildInsertStatement(entity.getClass());
-    try (var statement = connection.prepareStatement(insertStatementText, Statement.RETURN_GENERATED_KEYS)) {
-      fillInsertWildCards(statement, entity);
+    return performWithinStatement(insertStatementText, true, statement -> {
+      fillInsertStatement(statement, entity);
       statement.executeUpdate();
       setGeneratedId(entity, statement.getGeneratedKeys());
       return entity;
-    } catch (SQLException e) {
-      throw new PersistenceException("Failed executing INSERT statement", e);
-    }
+    });
   }
 
   public void update(Object entity) {
     Objects.requireNonNull(entity);
     var updateStatementText = buildUpdateStatement(entity.getClass());
-    try (var statement = connection.prepareStatement(updateStatementText)) { //@Todo: see if we can optimize try stmts
-      fillUpdateWildCards(statement, entity);
+    performWithinStatement(updateStatementText, statement -> {
+      fillUpdateStatement(statement, entity);
       statement.executeUpdate();
-    } catch (SQLException e) {
-      throw new PersistenceException("Failed executing UPDATE statement", e);
-    }
+    });
   }
 
   @Override
   public void delete(Object entity) {
     Objects.requireNonNull(entity);
     var deleteStatementText = buildDeleteStatement(entity.getClass());
-    try (var statement = connection.prepareStatement(deleteStatementText)) {
-      fillDeleteWildCard(statement, entity);
+    performWithinStatement(deleteStatementText, statement -> {
+      fillDeleteStatement(statement, entity);
       statement.executeUpdate();
+    });
+  }
+
+  private void performWithinStatement(String statement, StatementConsumer consumer) {
+    performWithinStatement(statement, false, consumer );
+  }
+
+  private <T> T performWithinStatement(String statementText, boolean generatedKeys, StatementFunction<T> function) {
+    log.info("Executing SQL statement: {}", statementText);
+    try (var statement = connection.prepareStatement(statementText,
+        generatedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)
+    ) {
+      return function.apply(statement);
     } catch (SQLException e) {
-      throw new PersistenceException("Failed executing DELETE statement", e);
+      throw new PersistenceException("Failed performing SQL statement: " + statementText, e);
     }
   }
 
-  @SneakyThrows
-  private <T> void fillDeleteWildCard(PreparedStatement statement, T entity) {
-    var idField = resolveEntityIdField(entity.getClass());
-    idField.setAccessible(true);
-    var idValue = idField.get(entity);
-    if (idValue == null) {
-      throw new RuntimeException("А-я-яй, більше так не роби");
-    }
-    statement.setObject(1, idValue);
+  private void fillSelectStatement(PreparedStatement statement, Object value) throws SQLException {
+    fillStmtWildcards(statement, value);
   }
 
-
-
-  @SneakyThrows
-  private void fillUpdateWildCards(PreparedStatement statement, Object entity) {
-    var nonIdFields = getEntityNonIdFields(entity.getClass()).stream()
-        .toList();
-    for (int i = 0; i < nonIdFields.size(); i++) {
-      var field = nonIdFields.get(i);
-      field.setAccessible(true);
-      statement.setObject(i + 1, field.get(entity));
+  private <T> void fillDeleteStatement(PreparedStatement statement, T entity) throws SQLException {
+    var id = getEntityIdValue(entity);
+    if (id == null) {
+      throw new BibernateException("Cannot delete transient entity");
     }
-    var idField = resolveEntityIdField(entity.getClass());
-    idField.setAccessible(true);
-    statement.setObject(nonIdFields.size() + 1, idField.get(entity));
+    fillStmtWildcards(statement, id);
   }
 
-  @SneakyThrows
-  private void fillInsertWildCards(PreparedStatement statement, Object entity) {
-    var nonIdFields = getEntityNonIdFields(entity.getClass()).stream()
-        .toList();
-    for (int i = 0; i < nonIdFields.size(); i++) {
-      var field = nonIdFields.get(i);
-      field.setAccessible(true);
-      statement.setObject(i + 1, field.get(entity));
-    }
+  private void fillUpdateStatement(PreparedStatement statement, Object entity) throws SQLException {
+    var allWildcardFields = new ArrayList<Object>(getEntityNonIdValues(entity));
+    allWildcardFields.add(getEntityIdValue(entity));
+    fillStmtWildcards(statement, allWildcardFields.toArray());
   }
 
+  private void fillInsertStatement(PreparedStatement statement, Object entity) throws SQLException {
+    fillStmtWildcards(statement, getEntityNonIdValues(entity).toArray());
+  }
+
+  private void fillStmtWildcards(PreparedStatement statement, Object... values) throws SQLException {
+    for (var i = 0; i < values.length; i++) {
+      statement.setObject(i + 1, values[i]);
+    }
+  }
 
   private void setGeneratedId(Object entity, ResultSet generatedKeysRs) throws SQLException {
     generatedKeysRs.next();
@@ -152,9 +148,10 @@ public class EntityPersisterImpl implements EntityPersister {
     try {
       idField.set(entity, id);
     } catch (ReflectiveOperationException e) {
-      throw new RuntimeException("We're screwed", e);
+      throw new PersistenceException("Unable to assign a generated key for the entity", e);
     }
   }
+
 
 
 

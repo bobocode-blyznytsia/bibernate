@@ -5,6 +5,7 @@ import static com.bobocode.blyznytsia.bibernate.util.CaseUtil.camelToSnakeCase;
 import com.bobocode.blyznytsia.bibernate.annotation.Column;
 import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.annotation.Table;
+import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.exception.MalformedEntityException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -47,6 +48,25 @@ public class EntityUtil {
     return Arrays.stream(entityType.getDeclaredFields())
         .filter(field -> !field.isAnnotationPresent(Id.class))
         .toList();
+  }
+
+  public static List<Object> getEntityNonIdValues(Object entity) {
+    return getEntityNonIdFields(entity.getClass()).stream()
+        .map(field -> getFieldValue(field, entity))
+        .toList();
+  }
+
+  public static Object getEntityIdValue(Object entity) {
+    return getFieldValue(resolveEntityIdField(entity.getClass()), entity);
+  }
+
+  private Object getFieldValue(Field field, Object obj){
+    try {
+      field.setAccessible(true);
+      return field.get(obj);
+    } catch (IllegalAccessException e) {
+      throw new BibernateException(e.getMessage(), e);
+    }
   }
 
 }
