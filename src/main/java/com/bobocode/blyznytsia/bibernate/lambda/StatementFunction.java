@@ -6,7 +6,8 @@ import java.sql.SQLException;
 /**
  * A function that accepts an instance opened {@link PreparedStatement} and returns a generic value, or throws
  * {@link SQLException}
- * @param <T>
+ *
+ * @param <T> Entity to be returned
  */
 @FunctionalInterface
 public interface StatementFunction<T> {

@@ -60,7 +60,7 @@ public class EntityUtil {
     return getFieldValue(resolveEntityIdField(entity.getClass()), entity);
   }
 
-  private Object getFieldValue(Field field, Object obj){
+  private Object getFieldValue(Field field, Object obj) {
     try {
       field.setAccessible(true);
       return field.get(obj);
