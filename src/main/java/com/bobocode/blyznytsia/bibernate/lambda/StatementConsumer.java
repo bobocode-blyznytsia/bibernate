@@ -8,11 +8,24 @@ import java.sql.SQLException;
  */
 @FunctionalInterface
 public interface StatementConsumer extends StatementFunction<Void> {
+
+  /**
+   * Default implementation for a @{@link StatementFunction#apply(PreparedStatement)} method that woks as an adapter
+   * for method {@link StatementConsumer#consume(PreparedStatement)}
+   *
+   * @param stmt - an instance of {@link PreparedStatement}
+   */
   default Void apply(PreparedStatement stmt) throws SQLException {
     consume(stmt);
     return null;
   }
 
 
+  /**
+   * Method that accepts {@link PreparedStatement} and perform operations with it
+   *
+   * @param stmt - an instance of {@link PreparedStatement}
+   * @throws SQLException - exception that may occur performing operation within {@link PreparedStatement}
+   */
   void consume(PreparedStatement stmt) throws SQLException;
 }
