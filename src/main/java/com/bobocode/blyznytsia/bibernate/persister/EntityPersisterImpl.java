@@ -146,7 +146,7 @@ public class EntityPersisterImpl implements EntityPersister {
     }
   }
 
-  private void setGeneratedId(Object entity, ResultSet generatedKeysRs) throws SQLException { //@Todo: throw illegalt
+  private void setGeneratedId(Object entity, ResultSet generatedKeysRs) throws SQLException {
     generatedKeysRs.next();
     var id = generatedKeysRs.getObject(1);
     var idField = EntityUtil.resolveEntityIdField(entity.getClass());
