@@ -21,9 +21,15 @@
         <junit.version>5.9.0</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <slf4j.version>2.0.6</slf4j.version>
+        <hikari.version>5.0.1</hikari.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikari.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
