@@ -45,9 +45,9 @@ public class EntitySnapshot {
         Object currentFieldValue = field.get(currentValue);
         Object originalFieldValue = field.get(originalValue);
 
-        if (!Objects.equals(currentFieldValue, originalFieldValue) &&
-            (!isInheritedEntity(field) ||
-                isDirtyRecursive(currentFieldValue, originalFieldValue))) {
+        if (!Objects.equals(currentFieldValue, originalFieldValue)
+            && (!isInheritedEntity(field)
+              || isDirtyRecursive(currentFieldValue, originalFieldValue))) {
           return true;
         }
       } catch (IllegalAccessException e) {
