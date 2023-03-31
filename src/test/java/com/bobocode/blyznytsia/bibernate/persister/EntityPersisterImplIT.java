@@ -179,7 +179,6 @@ class EntityPersisterImplIT {
     }
   }
 
-
   @AfterEach
   public void closeConnection() throws SQLException {
     connection.close();
