@@ -38,7 +38,7 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   @Override
-  public <T> List<T> findAll(Class<T> entityType, Field key, Object value) {
+  public <T> List<T> findAllBy(Class<T> entityType, Field key, Object value) {
     var entities = new ArrayList<T>();
     var statementText = buildSelectStatement(entityType, key);
     return performWithinStatement(statementText, false, statement -> {

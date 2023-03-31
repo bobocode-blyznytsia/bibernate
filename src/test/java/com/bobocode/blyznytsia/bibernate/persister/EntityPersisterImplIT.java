@@ -48,14 +48,14 @@ class EntityPersisterImplIT {
           new SampleEntity(1L, "val1"),
           new SampleEntity(2L, "val1")
       );
-      var actualList = entityPersister.findAll(SampleEntity.class, keyField, "val1");
+      var actualList = entityPersister.findAllBy(SampleEntity.class, keyField, "val1");
       assertEquals(expectedList, actualList);
     }
 
     @Test
     void returnsEmptyListIfNoRecordsFound() throws NoSuchFieldException {
       var keyField = SampleEntity.class.getDeclaredField("someValue");
-      var results = entityPersister.findAll(SampleEntity.class, keyField, "non-existent value");
+      var results = entityPersister.findAllBy(SampleEntity.class, keyField, "non-existent value");
       assertTrue(results.isEmpty());
     }
 
