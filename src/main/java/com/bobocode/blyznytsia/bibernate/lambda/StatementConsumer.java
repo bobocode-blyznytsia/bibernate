@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public interface StatementConsumer extends StatementFunction<Void> {
 
   /**
-   * Default implementation for a @{@link StatementFunction#apply(PreparedStatement)} method that woks as an adapter
+   * Default implementation for a @{@link StatementFunction#apply(PreparedStatement)} method that works as an adapter
    * for method {@link StatementConsumer#consume(PreparedStatement)}
    *
    * @param stmt - an instance of {@link PreparedStatement}
