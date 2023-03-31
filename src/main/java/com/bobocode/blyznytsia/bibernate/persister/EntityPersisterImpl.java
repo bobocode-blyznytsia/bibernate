@@ -42,7 +42,7 @@ public class EntityPersisterImpl implements EntityPersister {
     var entities = new ArrayList<T>();
     var statementText = buildSelectStatement(entityType, key);
     return performWithinStatement(statementText, false, statement -> {
-      fillSelectStatement(statement, value);
+      fillStmtWildcards(statement, value);
       var rs = statement.executeQuery();
       while (rs.next()) {
         entities.add(resultSetMapper.mapToEntity(rs, entityType));
@@ -54,7 +54,7 @@ public class EntityPersisterImpl implements EntityPersister {
 
   @Override
   public <T> Optional<T> findOneBy(Class<T> entityType, Field key, Object value) {
-    List<T> entitiesFound = findAll(entityType, key, value);
+    List<T> entitiesFound = findAllBy(entityType, key, value);
     if (entitiesFound.size() > 1) {
       throw new PersistenceException("Query returned more than one entity");
     }
@@ -71,8 +71,8 @@ public class EntityPersisterImpl implements EntityPersister {
   public <T> T insert(T entity) {
     Objects.requireNonNull(entity);
     var insertStatementText = buildInsertStatement(entity.getClass());
-    return performWithinStatement(insertStatementText, true, statement -> {
-      fillInsertStatement(statement, entity);
+    return performWithinStatementWithGeneratedKeys(insertStatementText,  statement -> {
+      fillStmtWildcards(statement, getEntityNonIdValues(entity).toArray());
       statement.executeUpdate();
       setGeneratedId(entity, statement.getGeneratedKeys());
       return entity;
@@ -84,7 +84,9 @@ public class EntityPersisterImpl implements EntityPersister {
     checkEntityNotTransient(entity);
     var updateStatementText = buildUpdateStatement(entity.getClass());
     performWithinStatement(updateStatementText, statement -> {
-      fillUpdateStatement(statement, entity);
+      var allWildcardFields = new ArrayList<>(getEntityNonIdValues(entity));
+      allWildcardFields.add(getEntityIdValue(entity));
+      fillStmtWildcards(statement, allWildcardFields.toArray());
       statement.executeUpdate();
     });
   }
@@ -95,13 +97,17 @@ public class EntityPersisterImpl implements EntityPersister {
     checkEntityNotTransient(entity);
     var deleteStatementText = buildDeleteStatement(entity.getClass());
     performWithinStatement(deleteStatementText, statement -> {
-      fillDeleteStatement(statement, entity);
+      fillStmtWildcards(statement, getEntityIdValue(entity));
       statement.executeUpdate();
     });
   }
 
   private void performWithinStatement(String statement, StatementConsumer consumer) {
     performWithinStatement(statement, false, consumer);
+  }
+
+  private <T> T performWithinStatementWithGeneratedKeys(String statement, StatementFunction<T> function) {
+    return performWithinStatement(statement, true, function);
   }
 
   private <T> T performWithinStatement(String statementText, boolean generatedKeys, StatementFunction<T> function) {
@@ -113,24 +119,6 @@ public class EntityPersisterImpl implements EntityPersister {
     } catch (SQLException e) {
       throw new PersistenceException("Failed performing SQL statement: " + statementText, e);
     }
-  }
-
-  private void fillSelectStatement(PreparedStatement statement, Object value) throws SQLException {
-    fillStmtWildcards(statement, value);
-  }
-
-  private <T> void fillDeleteStatement(PreparedStatement statement, T entity) throws SQLException {
-    fillStmtWildcards(statement, getEntityIdValue(entity));
-  }
-
-  private void fillUpdateStatement(PreparedStatement statement, Object entity) throws SQLException {
-    var allWildcardFields = new ArrayList<>(getEntityNonIdValues(entity));
-    allWildcardFields.add(getEntityIdValue(entity));
-    fillStmtWildcards(statement, allWildcardFields.toArray());
-  }
-
-  private void fillInsertStatement(PreparedStatement statement, Object entity) throws SQLException {
-    fillStmtWildcards(statement, getEntityNonIdValues(entity).toArray());
   }
 
   private void fillStmtWildcards(PreparedStatement statement, Object... values) throws SQLException {
