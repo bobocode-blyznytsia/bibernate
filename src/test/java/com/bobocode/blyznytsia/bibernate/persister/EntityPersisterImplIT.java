@@ -21,17 +21,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(CamelCaseNameGenerator.class)
-class EntityPersisterImplTest {
+class EntityPersisterImplIT {
 
-  Connection connection;
-  EntityPersister entityPersister;
-
-  ResultSetMapper mockResultSetMapper = new SampleEntityResultSetMapper();
+  private Connection connection;
+  private EntityPersister entityPersister;
+  private final ResultSetMapper mockResultSetMapper = new SampleEntityResultSetMapper();
 
   @BeforeEach
   public void getConnection() throws SQLException {
