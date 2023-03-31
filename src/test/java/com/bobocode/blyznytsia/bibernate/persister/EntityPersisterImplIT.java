@@ -58,7 +58,6 @@ class EntityPersisterImplIT {
       assertTrue(results.isEmpty());
     }
 
-
   }
 
   @Nested
