@@ -7,6 +7,7 @@ import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.resolveFieldColu
 import static java.util.stream.Collectors.joining;
 
 import java.lang.reflect.Field;
+import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -19,6 +20,7 @@ public class SqlUtil {
   private static final String INSERT_STATEMENT_TEMPLATE = "INSERT INTO %s (%s) VALUES (%s)";
   private static final String UPDATE_STATEMENT_TEMPLATE = "UPDATE %s SET %s WHERE %s = ?";
   private static final String DELETE_STATEMENT_TEMPLATE = "DELETE FROM %s WHERE %s = ?";
+  private static final String COMMA_DELIMITER = ", ";
 
   /**
    * Builds an SQL INSERT statement for the given entity type.
@@ -27,12 +29,13 @@ public class SqlUtil {
    * @return the SQL INSERT statement
    */
   public static String buildInsertStatement(Class<?> entityType) {
-    var commaSeparatedColumns = getEntityNonIdFields(entityType).stream()
+    var nonIdFields = getEntityNonIdFields(entityType);
+    var commaSeparatedColumns = nonIdFields.stream()
         .map(EntityUtil::resolveFieldColumnName)
-        .collect(joining(", "));
-    var commaSeparatedWildcards = getEntityNonIdFields(entityType).stream()
-        .map(f -> "?")
-        .collect(joining(", "));
+        .collect(joining(COMMA_DELIMITER));
+    var commaSeparatedWildcards = Stream.generate(() -> "?")
+        .limit(nonIdFields.size())
+        .collect(joining(COMMA_DELIMITER));
     var tableName = resolveEntityTableName(entityType);
     return INSERT_STATEMENT_TEMPLATE.formatted(tableName, commaSeparatedColumns, commaSeparatedWildcards);
   }
@@ -73,7 +76,7 @@ public class SqlUtil {
     var columnAssignments = getEntityNonIdFields(entityType).stream()
         .map(EntityUtil::resolveFieldColumnName)
         .map(col -> col + " = ?")
-        .collect(joining(", "));
+        .collect(joining(COMMA_DELIMITER));
     var idFieldName = resolveFieldColumnName(resolveEntityIdField(entityType));
     return UPDATE_STATEMENT_TEMPLATE.formatted(tableName, columnAssignments, idFieldName);
   }
