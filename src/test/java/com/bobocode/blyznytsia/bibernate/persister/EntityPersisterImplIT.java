@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bobocode.blyznytsia.bibernate.CamelCaseNameGenerator;
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
+import com.bobocode.blyznytsia.bibernate.exception.TransientEntityException;
 import com.bobocode.blyznytsia.bibernate.testdata.entity.NonExistingEntity;
 import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
 import com.bobocode.blyznytsia.bibernate.testdata.mapper.SampleEntityResultSetMapper;
@@ -101,8 +102,8 @@ class EntityPersisterImplIT {
     }
 
     @Test
-    void throwsIllegalArgumentExceptionWhenIdIsNull() {
-      assertThrows(IllegalArgumentException.class, () -> entityPersister.findById(SampleEntity.class, null));
+    void throwsNpeExceptionWhenIdIsNull() {
+      assertThrows(NullPointerException.class, () -> entityPersister.findById(SampleEntity.class, null));
     }
 
   }
@@ -145,9 +146,9 @@ class EntityPersisterImplIT {
     }
 
     @Test
-    void throwsPersistenceExceptionWhenEntityIsTransient() {
+    void throwsTransientEntityExceptionWhenEntityIsTransient() {
       var entityToUpdate = new SampleEntity(null, null);
-      assertThrows(PersistenceException.class, () -> entityPersister.update(entityToUpdate));
+      assertThrows(TransientEntityException.class, () -> entityPersister.update(entityToUpdate));
     }
   }
 
@@ -161,9 +162,9 @@ class EntityPersisterImplIT {
     }
 
     @Test
-    void throwsPersistenceExceptionWhenEntityIsTransient() {
+    void throwsTransientEntityExceptionWhenEntityIsTransient() {
       var entityToDelete = new SampleEntity(null, null);
-      assertThrows(PersistenceException.class, () -> entityPersister.delete(entityToDelete));
+      assertThrows(TransientEntityException.class, () -> entityPersister.delete(entityToDelete));
     }
   }
 

@@ -8,6 +8,7 @@ import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildSelectStatemen
 import static com.bobocode.blyznytsia.bibernate.util.SqlUtil.buildUpdateStatement;
 
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
+import com.bobocode.blyznytsia.bibernate.exception.TransientEntityException;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementConsumer;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementFunction;
 import com.bobocode.blyznytsia.bibernate.util.EntityUtil;
@@ -62,9 +63,7 @@ public class EntityPersisterImpl implements EntityPersister {
 
   @Override
   public <T> Optional<T> findById(Class<T> entityType, Object id) {
-    if (id == null) {
-      throw new IllegalArgumentException("Id must not be null");
-    }
+    Objects.requireNonNull(id, "Entity id must not be null");
     return findOneBy(entityType, EntityUtil.resolveEntityIdField(entityType), id);
   }
 
@@ -82,6 +81,7 @@ public class EntityPersisterImpl implements EntityPersister {
 
   public void update(Object entity) {
     Objects.requireNonNull(entity);
+    checkEntityNotTransient(entity);
     var updateStatementText = buildUpdateStatement(entity.getClass());
     performWithinStatement(updateStatementText, statement -> {
       fillUpdateStatement(statement, entity);
@@ -92,6 +92,7 @@ public class EntityPersisterImpl implements EntityPersister {
   @Override
   public void delete(Object entity) {
     Objects.requireNonNull(entity);
+    checkEntityNotTransient(entity);
     var deleteStatementText = buildDeleteStatement(entity.getClass());
     performWithinStatement(deleteStatementText, statement -> {
       fillDeleteStatement(statement, entity);
@@ -119,19 +120,11 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   private <T> void fillDeleteStatement(PreparedStatement statement, T entity) throws SQLException {
-    var id = getEntityIdValue(entity);
-    if (id == null) {
-      throw new PersistenceException("Cannot delete transient entity");
-    }
-    fillStmtWildcards(statement, id);
+    fillStmtWildcards(statement, getEntityIdValue(entity));
   }
 
   private void fillUpdateStatement(PreparedStatement statement, Object entity) throws SQLException {
     var allWildcardFields = new ArrayList<>(getEntityNonIdValues(entity));
-    var id = getEntityIdValue(entity);
-    if (id == null) {
-      throw new PersistenceException("Cannot update transient entity");
-    }
     allWildcardFields.add(getEntityIdValue(entity));
     fillStmtWildcards(statement, allWildcardFields.toArray());
   }
@@ -155,6 +148,14 @@ public class EntityPersisterImpl implements EntityPersister {
       idField.set(entity, id);
     } catch (ReflectiveOperationException e) {
       throw new PersistenceException("Unable to assign a generated key for the entity", e);
+    }
+  }
+
+
+  private void checkEntityNotTransient(Object entity) {
+    var id = getEntityIdValue(entity);
+    if (id == null) {
+      throw new TransientEntityException("This operation cannot be performed with transient entity");
     }
   }
 
