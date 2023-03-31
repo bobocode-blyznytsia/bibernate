@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayNameGeneration(CamelCaseNameGenerator.class)
-class EntityPersisterImplIT {
+class EntityPersisterImplITTest {
 
   private Connection connection;
   private EntityPersister entityPersister;

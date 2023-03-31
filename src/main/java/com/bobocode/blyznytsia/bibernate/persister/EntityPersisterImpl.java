@@ -103,16 +103,16 @@ public class EntityPersisterImpl implements EntityPersister {
     });
   }
 
+  private <T> T performWithinStatementWithGeneratedKeys(String statement, StatementFunction<T> function) {
+    return performWithinStatement(statement, true, function);
+  }
+
   private void performWithinStatement(String statement, StatementConsumer consumer) {
     performWithinStatement(statement, false, consumer);
   }
 
   private <T> T performWithinStatement(String statement, StatementFunction<T> function) {
     return performWithinStatement(statement, false, function);
-  }
-
-  private <T> T performWithinStatementWithGeneratedKeys(String statement, StatementFunction<T> function) {
-    return performWithinStatement(statement, true, function);
   }
 
   private <T> T performWithinStatement(String statementText, boolean generatedKeys, StatementFunction<T> function) {
