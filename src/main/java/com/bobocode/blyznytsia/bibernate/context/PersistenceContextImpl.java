@@ -12,9 +12,8 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class PersistenceContextImpl implements PersistenceContext {
 
-  private Map<EntityKey, EntitySnapshot> entitySnapshots = new HashMap<>();
-
-  private Map<EntityKey, Object> entityCache = new HashMap<>();
+  private final Map<EntityKey, EntitySnapshot> entitySnapshots = new HashMap<>();
+  private final Map<EntityKey, Object> entityCache = new HashMap<>();
 
   @Override
   public Map<EntityKey, Object> dirtyCheck() {

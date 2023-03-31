@@ -1,8 +1,12 @@
 package com.bobocode.blyznytsia.bibernate.context;
 
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  * Stores a deep copy of the provided entity object and provides a method to check if the current
@@ -21,18 +25,16 @@ public class EntitySnapshot {
    *
    * @param entity The entity object to compare with the original state.
    * @return true if the entity's state is different from its original state, false otherwise.
-   * @throws IllegalArgumentException if the given entity is null or not of the same class as the original entity.
+   * @throws IllegalArgumentException if the given entity not of the same class as the original entity.
    */
   public boolean isDirty(Object entity) {
     if (entity == null) {
-      throw new IllegalArgumentException("Entity cannot be null");
+      return true;
     }
-
     if (!entity.getClass().equals(originalEntityState.getClass())) {
       throw new IllegalArgumentException(
           "Entity and originalEntityState must be of the same class");
     }
-
     return isDirtyRecursive(entity, originalEntityState);
   }
 
@@ -44,7 +46,7 @@ public class EntitySnapshot {
         Object originalFieldValue = field.get(originalValue);
 
         if (!Objects.equals(currentFieldValue, originalFieldValue) &&
-            (currentFieldValue == null || shouldUseEquals(field) ||
+            (!isInheritedEntity(field) ||
                 isDirtyRecursive(currentFieldValue, originalFieldValue))) {
           return true;
         }
@@ -53,13 +55,6 @@ public class EntitySnapshot {
       }
     }
     return false;
-  }
-
-  private boolean shouldUseEquals(Field field) {
-    Class<?> fieldType = field.getType();
-    String fieldTypeName = fieldType.getName();
-    return fieldType.isPrimitive() || fieldTypeName.startsWith("java.lang") ||
-        fieldTypeName.startsWith("java.time");
   }
 
   private Object deepCopy(Object source) {
@@ -75,11 +70,23 @@ public class EntitySnapshot {
       field.setAccessible(true);
       try {
         Object fieldValue = field.get(source);
+        if (fieldValue != null && isInheritedEntity(field)) {
+          fieldValue = deepCopy(fieldValue);
+        } else if (field.getType().isAssignableFrom(Serializable.class)) {
+          fieldValue = SerializationUtils.clone((Serializable) fieldValue);
+        }
         field.set(target, fieldValue);
       } catch (IllegalAccessException e) {
         throw new PersistenceException("Failed to copy entity field value", e);
       }
     }
     return target;
+  }
+
+  private boolean isInheritedEntity(Field field) {
+    List<String> packages = Arrays.asList("java.lang", "java.time", "java.math", "java.util");
+    Class<?> fieldType = field.getType();
+    String fieldTypeName = fieldType.getName();
+    return !fieldType.isPrimitive() && packages.stream().noneMatch(fieldTypeName::startsWith);
   }
 }
