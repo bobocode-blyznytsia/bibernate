@@ -29,8 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityPersisterImpl implements EntityPersister {
 
-  Connection connection;
-  ResultSetMapper resultSetMapper;
+  private final Connection connection;
+  private final ResultSetMapper resultSetMapper;
 
   public EntityPersisterImpl(Connection connection, ResultSetMapper resultSetMapper) {
     this.connection = connection;
