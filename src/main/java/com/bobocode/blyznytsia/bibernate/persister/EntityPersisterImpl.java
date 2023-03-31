@@ -41,7 +41,7 @@ public class EntityPersisterImpl implements EntityPersister {
   public <T> List<T> findAllBy(Class<T> entityType, Field key, Object value) {
     var entities = new ArrayList<T>();
     var statementText = buildSelectStatement(entityType, key);
-    return performWithinStatement(statementText, false, statement -> {
+    return performWithinStatement(statementText, statement -> {
       fillStmtWildcards(statement, value);
       var rs = statement.executeQuery();
       while (rs.next()) {
@@ -71,7 +71,7 @@ public class EntityPersisterImpl implements EntityPersister {
   public <T> T insert(T entity) {
     Objects.requireNonNull(entity);
     var insertStatementText = buildInsertStatement(entity.getClass());
-    return performWithinStatementWithGeneratedKeys(insertStatementText,  statement -> {
+    return performWithinStatementWithGeneratedKeys(insertStatementText, statement -> {
       fillStmtWildcards(statement, getEntityNonIdValues(entity).toArray());
       statement.executeUpdate();
       setGeneratedId(entity, statement.getGeneratedKeys());
@@ -79,6 +79,7 @@ public class EntityPersisterImpl implements EntityPersister {
     });
   }
 
+  @Override
   public void update(Object entity) {
     Objects.requireNonNull(entity);
     checkEntityNotTransient(entity);
@@ -104,6 +105,10 @@ public class EntityPersisterImpl implements EntityPersister {
 
   private void performWithinStatement(String statement, StatementConsumer consumer) {
     performWithinStatement(statement, false, consumer);
+  }
+
+  private <T> T performWithinStatement(String statement, StatementFunction<T> function) {
+    return performWithinStatement(statement, false, function);
   }
 
   private <T> T performWithinStatementWithGeneratedKeys(String statement, StatementFunction<T> function) {
