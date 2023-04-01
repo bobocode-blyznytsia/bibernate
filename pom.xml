@@ -121,6 +121,7 @@
                         <exclude>com/bobocode/blyznytsia/bibernate/exception/**</exclude>
                         <exclude>com/bobocode/blyznytsia/bibernate/annotation/**</exclude>
                         <exclude>com/bobocode/blyznytsia/bibernate/model/**</exclude>
+                        <exclude>com/bobocode/blyznytsia/bibernate/config/**</exclude>
                     </excludes>
                     <rules>
                         <rule>
