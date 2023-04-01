@@ -8,10 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bobocode.blyznytsia.bibernate.CamelCaseNameGenerator;
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
 import com.bobocode.blyznytsia.bibernate.exception.TransientEntityException;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.NonExistingEntity;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
-import com.bobocode.blyznytsia.bibernate.testdata.mapper.SampleEntityResultSetMapper;
-import com.bobocode.blyznytsia.bibernate.util.ResultSetMapper;
+import com.bobocode.blyznytsia.bibernate.mapper.ResultSetMapperImpl;
+import com.bobocode.blyznytsia.bibernate.testdata.NonExistingEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -28,7 +27,6 @@ class EntityPersisterImplITTest {
 
   private Connection connection;
   private EntityPersister entityPersister;
-  private final ResultSetMapper mockResultSetMapper = new SampleEntityResultSetMapper();
 
   @BeforeEach
   public void getConnection() throws SQLException {
@@ -36,14 +34,14 @@ class EntityPersisterImplITTest {
         "jdbc:h2:mem:~/test;" +
             "MODE=PostgreSQL;" +
             "INIT=runscript from './src/test/resources/sql/init.sql'");
-    entityPersister = new EntityPersisterImpl(connection, mockResultSetMapper);
+    entityPersister = new EntityPersisterImpl(connection);
   }
 
   @Nested
   class FindAll {
     @Test
-    void returnsListOfValuesByKey() throws NoSuchFieldException {
-      var keyField = SampleEntity.class.getDeclaredField("someValue");
+    void returnsListOfValuesByKey() {
+      var keyField = "some_value";
       var expectedList = List.of(
           new SampleEntity(1L, "val1"),
           new SampleEntity(2L, "val1")
@@ -53,8 +51,8 @@ class EntityPersisterImplITTest {
     }
 
     @Test
-    void returnsEmptyListIfNoRecordsFound() throws NoSuchFieldException {
-      var keyField = SampleEntity.class.getDeclaredField("someValue");
+    void returnsEmptyListIfNoRecordsFound() {
+      var keyField = "some_value";
       var results = entityPersister.findAllBy(SampleEntity.class, keyField, "non-existent value");
       assertTrue(results.isEmpty());
     }
@@ -67,7 +65,7 @@ class EntityPersisterImplITTest {
     void returnsEntityByKey() throws NoSuchFieldException {
       var keyField = SampleEntity.class.getDeclaredField("id");
       var expectedEntity = new SampleEntity(1L, "val1");
-      var actualEntityOptional = entityPersister.findOneBy(SampleEntity.class, keyField, 1L);
+      var actualEntityOptional = entityPersister.findOneBy(SampleEntity.class, keyField.getName(), 1L);
       assertTrue(actualEntityOptional.isPresent());
       assertEquals(expectedEntity, actualEntityOptional.get());
     }
@@ -75,13 +73,14 @@ class EntityPersisterImplITTest {
     @Test
     void returnsEmptyOptionalWhenNoValueFound() throws NoSuchFieldException {
       var keyField = SampleEntity.class.getDeclaredField("id");
-      assertTrue(entityPersister.findOneBy(SampleEntity.class, keyField, -1L).isEmpty());
+      assertTrue(entityPersister.findOneBy(SampleEntity.class, keyField.getName(), -1L).isEmpty());
     }
 
     @Test
     void throwsPersistenceExceptionIfMultipleRowsFound() throws NoSuchFieldException {
       var keyField = SampleEntity.class.getDeclaredField("someValue");
-      assertThrows(PersistenceException.class, () -> entityPersister.findOneBy(SampleEntity.class, keyField, "val1"));
+      assertThrows(PersistenceException.class, () -> entityPersister.findOneBy(SampleEntity.class,
+          keyField.getName(), "val1"));
     }
   }
 
@@ -172,8 +171,12 @@ class EntityPersisterImplITTest {
     try (var stmt = connection.prepareStatement("SELECT * FROM sample_entity WHERE id = ?")) {
       stmt.setLong(1, id);
       var rs = stmt.executeQuery();
-      rs.next();
-      return Optional.of(new SampleEntityResultSetMapper().mapToEntity(rs, SampleEntity.class));
+      if(rs.next()) {
+        return Optional.of(
+            new ResultSetMapperImpl(entityPersister).mapToEntity(rs, SampleEntity.class));
+      } else {
+        return Optional.empty();
+      }
     } catch (SQLException e) {
       return Optional.empty();
     }

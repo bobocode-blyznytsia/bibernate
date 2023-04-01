@@ -1,6 +1,5 @@
 package com.bobocode.blyznytsia.bibernate.persister;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +24,7 @@ public interface EntityPersister {
    * @param value      the value to search for in the specified field.
    * @return an {@code Optional} containing the found entity, or {@code Optional.empty()} if no entity was found.
    */
-  <T> Optional<T> findOneBy(Class<T> entityType, Field key, Object value);
+  <T> Optional<T> findOneBy(Class<T> entityType, String key, Object value);
 
   /**
    * Searches for all entities of the specified type that have the specified field value.
@@ -35,7 +34,7 @@ public interface EntityPersister {
    * @param value      the value to search for in the specified field.
    * @return a {@code List} containing all found entities, or an empty list if no entities were found.
    */
-  <T> List<T> findAllBy(Class<T> entityType, Field key, Object value);
+  <T> List<T> findAllBy(Class<T> entityType, String key, Object value);
 
   /**
    * Inserts a new entity into the database.

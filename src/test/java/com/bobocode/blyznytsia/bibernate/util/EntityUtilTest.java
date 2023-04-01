@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.bobocode.blyznytsia.bibernate.CamelCaseNameGenerator;
 import com.bobocode.blyznytsia.bibernate.exception.MalformedEntityException;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.AnnotatedSampleEntity;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWIthMultipleNonIdFields;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithMultipleIds;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithoutId;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.IdOnlyEntity;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.AnnotatedSampleEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.EntityWIthMultipleNonIdFields;
+import com.bobocode.blyznytsia.bibernate.testdata.EntityWithMultipleIds;
+import com.bobocode.blyznytsia.bibernate.testdata.EntityWithoutId;
+import com.bobocode.blyznytsia.bibernate.testdata.IdOnlyEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
