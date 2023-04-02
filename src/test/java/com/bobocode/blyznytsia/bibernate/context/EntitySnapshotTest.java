@@ -55,6 +55,9 @@ class EntitySnapshotTest {
     EntityWithEntitiesCollection entitiesCollectionFVer2 =
         new EntityWithEntitiesCollection(1, "Entity F",
             Arrays.asList(sampleEntityAVer2, sampleEntityAVer1));
+    EntityWithEntitiesCollection entitiesCollectionFVer3 =
+        new EntityWithEntitiesCollection(1, "Entity F",
+            Arrays.asList(sampleEntityAVer1, sampleEntityAVer1));
     EntityWithEntitiesCollection entitiesCollectionFDiffSize =
         new EntityWithEntitiesCollection(1, "Entity F",
             Arrays.asList(sampleEntityAVer2, sampleEntityAVer1, sampleEntityAVerId));
@@ -69,6 +72,7 @@ class EntitySnapshotTest {
         Arguments.of(nestedEntityDAVer1, nestedEntityDAVer2, false),
         Arguments.of(nestedEntityDAVer1, nestedEntityDB, true),
         Arguments.of(entitiesCollectionFVer1, entitiesCollectionFVer2, false),
+        Arguments.of(entitiesCollectionFVer1, entitiesCollectionFVer3, false),
         Arguments.of(entitiesCollectionFVer1, entitiesCollectionFDiffSize, true)
     );
   }

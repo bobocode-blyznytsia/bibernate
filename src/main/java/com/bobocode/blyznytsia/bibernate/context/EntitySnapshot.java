@@ -28,26 +28,26 @@ public class EntitySnapshot {
    * @throws IllegalArgumentException if the given entity not of the same class as the original entity.
    */
   public boolean isDirty(Object entity) {
-    if (entity == null) {
-      return true;
-    }
-    if (!entity.getClass().equals(originalEntityState.getClass())) {
+    if (entity != null && !entity.getClass().equals(originalEntityState.getClass())) {
       throw new IllegalArgumentException(
           "Entity and originalEntityState must be of the same class");
+    }
+    if (entity == null) {
+      return true;
     }
     return isDirtyRecursive(entity, originalEntityState);
   }
 
-  private boolean isDirtyRecursive(Object currentValue, Object originalValue) {
-    for (Field field : currentValue.getClass().getDeclaredFields()) {
+  private boolean isDirtyRecursive(Object entity, Object snapshot) {
+    for (Field field : entity.getClass().getDeclaredFields()) {
       field.setAccessible(true);
       try {
-        Object currentFieldValue = field.get(currentValue);
-        Object originalFieldValue = field.get(originalValue);
+        Object entityFieldValue = field.get(entity);
+        Object snapshotFieldValue = field.get(snapshot);
 
-        if (!Objects.equals(currentFieldValue, originalFieldValue)
+        if (!Objects.equals(entityFieldValue, snapshotFieldValue)
             && (!isInheritedEntity(field)
-              || isDirtyRecursive(currentFieldValue, originalFieldValue))) {
+            || isDirtyRecursive(entityFieldValue, snapshotFieldValue))) {
           return true;
         }
       } catch (IllegalAccessException e) {
@@ -58,14 +58,7 @@ public class EntitySnapshot {
   }
 
   private Object deepCopy(Object source) {
-    Object target;
-    try {
-      var sourceClass = source.getClass();
-      var constructor = sourceClass.getConstructor();
-      target = constructor.newInstance();
-    } catch (Exception e) {
-      throw new PersistenceException("Failed to create a new instance of the entity", e);
-    }
+    Object target = createEmptyPrototype(source);
     for (Field field : source.getClass().getDeclaredFields()) {
       field.setAccessible(true);
       try {
@@ -81,6 +74,16 @@ public class EntitySnapshot {
       }
     }
     return target;
+  }
+
+  private Object createEmptyPrototype(Object source) {
+    try {
+      var sourceClass = source.getClass();
+      var constructor = sourceClass.getConstructor();
+      return constructor.newInstance();
+    } catch (Exception e) {
+      throw new PersistenceException("Failed to create a new instance of the entity", e);
+    }
   }
 
   private boolean isInheritedEntity(Field field) {

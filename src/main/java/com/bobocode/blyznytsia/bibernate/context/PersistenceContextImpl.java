@@ -3,6 +3,7 @@ package com.bobocode.blyznytsia.bibernate.context;
 import com.bobocode.blyznytsia.bibernate.model.EntityKey;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Stores entity snapshots and manages a cache of entities using their EntityKeys.
@@ -17,17 +18,9 @@ public class PersistenceContextImpl implements PersistenceContext {
 
   @Override
   public Map<EntityKey, Object> dirtyCheck() {
-    Map<EntityKey, Object> dirtyEntities = new HashMap<>();
-    for (Map.Entry<EntityKey, EntitySnapshot> entry : entitySnapshots.entrySet()) {
-      EntityKey key = entry.getKey();
-      EntitySnapshot snapshot = entry.getValue();
-      Object entity = entityCache.get(key);
-
-      if (snapshot.isDirty(entity)) {
-        dirtyEntities.put(key, entity);
-      }
-    }
-    return dirtyEntities;
+    return entitySnapshots.entrySet().stream()
+        .filter(entry -> isEntityDirty(entry.getKey()))
+        .collect(Collectors.toMap(Map.Entry::getKey, entry -> entityCache.get(entry.getKey())));
   }
 
   @Override
@@ -39,5 +32,11 @@ public class PersistenceContextImpl implements PersistenceContext {
   public void addEntityToCache(EntityKey entityKey, Object entity) {
     entityCache.put(entityKey, entity);
     entitySnapshots.put(entityKey, new EntitySnapshot(entity));
+  }
+
+  private boolean isEntityDirty(EntityKey entityKey) {
+    EntitySnapshot entitySnapshot = entitySnapshots.get(entityKey);
+    Object entity = entityCache.get(entityKey);
+    return entitySnapshot.isDirty(entity);
   }
 }
