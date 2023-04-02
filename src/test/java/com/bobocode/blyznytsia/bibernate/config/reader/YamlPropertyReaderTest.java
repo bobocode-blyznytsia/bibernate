@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceFileNotFoundException;
+import com.bobocode.blyznytsia.bibernate.exception.PersistencePropertyUnrecognizedException;
 import com.bobocode.blyznytsia.bibernate.exception.PersistenceUnitNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,18 +21,18 @@ class YamlPropertyReaderTest {
     var persistenceUnitProperties = reader.readPropertiesFile("h2");
     var dataSourceConfig = persistenceUnitProperties.dataSource();
     Assertions.assertAll(
-        () -> assertEquals(persistenceUnitProperties.name(), "h2"),
-        () -> assertEquals(dataSourceConfig.jdbcUrl(), "jdbc:h2:mem:testdb"),
-        () -> assertEquals(dataSourceConfig.userName(), "sa"),
-        () -> assertEquals(dataSourceConfig.password(), "password"),
-        () -> assertEquals(dataSourceConfig.poolSize(), 10),
-        () -> assertEquals(dataSourceConfig.driverClassName(), "org.h2.Driver")
+        () -> assertEquals("h2", persistenceUnitProperties.name()),
+        () -> assertEquals("jdbc:h2:mem:testdb", dataSourceConfig.jdbcUrl()),
+        () -> assertEquals("sa", dataSourceConfig.userName()),
+        () -> assertEquals("password", dataSourceConfig.password()),
+        () -> assertEquals(10, dataSourceConfig.poolSize()),
+        () -> assertEquals("org.h2.Driver", dataSourceConfig.driverClassName())
     );
   }
 
   @Test
   @DisplayName("Read properties default file throw PersistenceUnitNotFoundException when unit not found")
-  void testReadPropertiesPersistenceUnitNotFound() {
+  void shouldReadPropertiesPersistenceUnitNotFound() {
     String invalidPersistenceUnitName = "    ";
 
     assertThatThrownBy(() -> reader.readPropertiesFile(invalidPersistenceUnitName))
@@ -41,16 +42,16 @@ class YamlPropertyReaderTest {
 
   @Test
   @DisplayName("Read properties provided file")
-  void testReadPropertiesForFile() {
+  void shouldReadPropertiesFromFile() {
     var properties = reader.readPropertiesFile(
         "provided-persistence.yml", "postgres");
 
-    assertEquals(properties.name(), "postgres");
+    assertEquals("postgres", properties.name());
   }
 
   @Test
   @DisplayName("Read properties provided file throw PersistenceUnitNotFoundException when unit not found")
-  void testReadPropertiesForFilePersistenceUnitNotFound() {
+  void shouldReadPropertiesFromFilePersistenceUnitNotFound() {
     String invalidPersistenceUnitName = "    ";
 
     assertThatThrownBy(() -> reader.readPropertiesFile("provided-persistence.yml",
@@ -61,7 +62,7 @@ class YamlPropertyReaderTest {
 
   @Test
   @DisplayName("Read properties provide file throw PersistenceFileNotFoundException when file not found")
-  void testReadPropertiesForFileThrowPersistenceFileNotFoundException() {
+  void shouldReadPropertiesFroFileThrowPersistenceFileNotFoundException() {
     String invalidPersistenceUnitName = "    ";
     String invalidFileName = "invalid-file.yml";
 
@@ -69,5 +70,16 @@ class YamlPropertyReaderTest {
         () -> reader.readPropertiesFile(invalidFileName, invalidPersistenceUnitName))
         .isInstanceOf(PersistenceFileNotFoundException.class)
         .hasMessage(String.format("Persistence file %s was not found", invalidFileName));
+  }
+
+  @Test
+  @DisplayName("Read properties provide file throw PersistencePropertyUnrecognizedException when file not found")
+  void shouldReadPropertiesFroFileThrowPersistencePropertyUnrecognizedException() {
+    String invalidPersistenceUnitName = "invalid-property";
+    String invalidFileName = "invalid-persistence.yml";
+
+    assertThatThrownBy(
+        () -> reader.readPropertiesFile(invalidFileName, invalidPersistenceUnitName))
+        .isInstanceOf(PersistencePropertyUnrecognizedException.class);
   }
 }

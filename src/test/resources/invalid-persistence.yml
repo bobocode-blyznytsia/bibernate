@@ -1,0 +1,8 @@
+persistenceUnits:
+  - name: invalid-property
+    dataSource:
+      jdbcUrl: jdbc:postgresql://localhost:5432/postgres
+      userName: postgres
+      password: postgres
+      driverClassName: org.postgresql.Driver
+      invalidProp: 5
