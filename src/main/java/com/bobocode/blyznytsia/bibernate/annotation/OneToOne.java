@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  *  The annotation is used to map one-to-one relationships with using reference types. You can mark
- *  reference fields in your entity class to handle one-to-one relation. Type of this filed must be
+ *  reference fields in your entity class to handle one-to-one relation. Type of this field must be
  *  entity as well. The annotation can be used for both bidirectional and unidirectional relations.
  *  All relations are eagerly fetched.
  * <pre>

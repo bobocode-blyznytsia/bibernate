@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  *  The annotation is used to map many-to-one relationships with using reference types. You can mark
- *  reference fields in your entity class to handle many-to-one relation. Type of this filed must
+ *  reference fields in your entity class to handle many-to-one relation. Type of this field must
  *  be entity as well. All relations are eagerly fetched.
  * <pre>
  *     Example:
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  *        public class Note {
  *        &#064;Id int id;
  *        ...
- *        &#064;ManyToOne(joinColumnName=user_id)
+ *        &#064;ManyToOne(joinColumnName="user_id")
  *        User user;
  *     }
  * </pre>

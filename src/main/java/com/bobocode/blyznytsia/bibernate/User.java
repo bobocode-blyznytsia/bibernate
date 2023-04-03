@@ -4,17 +4,19 @@ import com.bobocode.blyznytsia.bibernate.annotation.Column;
 import com.bobocode.blyznytsia.bibernate.annotation.Entity;
 import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.annotation.OneToMany;
-import java.time.Instant;
+import com.bobocode.blyznytsia.bibernate.annotation.OneToOne;
+import com.bobocode.blyznytsia.bibernate.annotation.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.List;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@Table(name = "users")
 @Setter
+@Getter
 @ToString
 public class User {
 
@@ -32,7 +34,10 @@ public class User {
 
   private LocalDate someDate;
 
-  @OneToMany
+  @OneToOne(mappedBy = "user")
+  private UserProfile profile;
+
+  @OneToMany(mappedBy = "user")
   private List<Note> notes;
 
 
