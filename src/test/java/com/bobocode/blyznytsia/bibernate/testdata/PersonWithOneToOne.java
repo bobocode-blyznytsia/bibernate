@@ -1,25 +1,27 @@
-package com.bobocode.blyznytsia.bibernate;
+package com.bobocode.blyznytsia.bibernate.testdata;
 
 import com.bobocode.blyznytsia.bibernate.annotation.Entity;
 import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.annotation.OneToOne;
 import com.bobocode.blyznytsia.bibernate.annotation.Table;
+import java.time.LocalDate;
 import lombok.Getter;
-import lombok.ToString;
 
-@Table(name = "user_profiles")
-@Entity
-@ToString(exclude = "user")
 @Getter
-public class UserProfile {
+@Entity
+@Table(name = "persons")
+public class PersonWithOneToOne {
 
   @Id
   private Integer id;
 
-  private String title;
+  private String firstName;
 
-  @OneToOne(joinColumnName = "user_id")
-  private User user;
+  private String lastName;
 
+  private LocalDate birthday;
+
+  @OneToOne(mappedBy = "person")
+  private Address address;
 
 }

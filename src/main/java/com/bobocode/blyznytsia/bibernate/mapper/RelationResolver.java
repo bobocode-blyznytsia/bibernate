@@ -34,10 +34,10 @@ public class RelationResolver {
   /**
    * Returns a foreign entity instance, that can be set in particular entity field.
    *
-   * @param entityField the entity foreign field, it can be reference field on other entity
-   * or {@link List} that has as generic type other entity
-   * @param rs instance of {@link ResultSet}
-   * @param entity current entity instance
+   * @param entityField the entity foreign field, it can be reference field on other entity or
+   *                    {@link List} that has as generic type other entity
+   * @param rs          instance of {@link ResultSet}
+   * @param entity      current entity instance
    * @return foreign entity instance
    */
   public Object resolveRelationField(Field entityField, ResultSet rs, Object entity) {
@@ -69,7 +69,8 @@ public class RelationResolver {
     }
   }
 
-  private <T> Object resolveOneToOneRelationFieldOnParentSide(Field entityField, ResultSet rs, T entity,
+  private <T> Object resolveOneToOneRelationFieldOnParentSide(Field entityField, ResultSet rs,
+      T entity,
       String mappedBy) {
     Class<?> entityType = entity.getClass();
     Object idValue = getEntityIdValueFromResultSet(rs, entityType);
@@ -113,16 +114,19 @@ public class RelationResolver {
     return (Class<?>) genericListType.getActualTypeArguments()[0];
   }
 
-  private Object resolveSingleRelationalFieldOnChildSide(String joinColumnName, Field entityField, ResultSet rs) {
+  private Object resolveSingleRelationalFieldOnChildSide(String joinColumnName, Field entityField,
+      ResultSet rs) {
     verifyJoinColumnNameIsNotEmpty(joinColumnName, entityField.getName());
     Object foreignKeyValue = getValueFromResultSet(rs, joinColumnName);
     Class<?> fieldType = entityField.getType();
     Supplier<Object> entitySupplier = () -> entityPersister.findById(fieldType, foreignKeyValue)
         .orElse(null);
-    return ifPresentGetEntityFromContextOrRetrieveAndPut(fieldType, foreignKeyValue, entitySupplier);
+    return ifPresentGetEntityFromContextOrRetrieveAndPut(fieldType, foreignKeyValue,
+        entitySupplier);
   }
 
-  private Object ifPresentGetEntityFromContextOrRetrieveFromDb(Class<?> fieldEntityClass, Object foreignKeyValue,
+  private Object ifPresentGetEntityFromContextOrRetrieveFromDb(Class<?> fieldEntityClass,
+      Object foreignKeyValue,
       Supplier<?> entitySupplier) {
     if (mappedEntitiesContext.isEntityPresentInContext(fieldEntityClass, foreignKeyValue)) {
       return mappedEntitiesContext.getEntityFromContext(fieldEntityClass, foreignKeyValue);
@@ -131,9 +135,11 @@ public class RelationResolver {
     }
   }
 
-  private Object ifPresentGetEntityFromContextOrRetrieveAndPut(Class<?> fieldEntityClass, Object foreignKeyValue,
+  private Object ifPresentGetEntityFromContextOrRetrieveAndPut(Class<?> fieldEntityClass,
+      Object foreignKeyValue,
       Supplier<?> entitySupplier) {
-    Object entityValue = ifPresentGetEntityFromContextOrRetrieveFromDb(fieldEntityClass, foreignKeyValue,
+    Object entityValue = ifPresentGetEntityFromContextOrRetrieveFromDb(fieldEntityClass,
+        foreignKeyValue,
         entitySupplier);
     mappedEntitiesContext.putEntityInContext(fieldEntityClass, foreignKeyValue, entityValue);
     return entityValue;

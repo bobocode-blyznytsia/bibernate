@@ -1,15 +1,15 @@
 package com.bobocode.blyznytsia.bibernate.mapper;
 
 import static com.bobocode.blyznytsia.bibernate.util.DateUtil.getDateFieldValue;
+import static com.bobocode.blyznytsia.bibernate.util.DateUtil.isDateField;
 import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.createEntity;
 import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.getEntityFields;
 import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.resolveFieldColumnName;
 import static com.bobocode.blyznytsia.bibernate.util.RelationsUtil.isRelationField;
-import static com.bobocode.blyznytsia.bibernate.util.ResultSetUtil.*;
+import static com.bobocode.blyznytsia.bibernate.util.ResultSetUtil.getValueFromResultSet;
 
 import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
 import com.bobocode.blyznytsia.bibernate.persister.EntityPersister;
-import com.bobocode.blyznytsia.bibernate.util.DateUtil;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.List;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ResultSetMapperImpl implements ResultSetMapper {
+
   private final RelationResolver relationResolver;
 
   public ResultSetMapperImpl(EntityPersister entityPersister) {
@@ -29,8 +30,8 @@ public class ResultSetMapperImpl implements ResultSetMapper {
   /**
    * Maps {@link ResultSet} to entity.
    *
-   * @param rs            instance of {@link ResultSet}
-   * @param entityClass   the type of entity to map
+   * @param rs          instance of {@link ResultSet}
+   * @param entityClass the type of entity to map
    * @return an entity instance
    */
   @Override
@@ -69,7 +70,7 @@ public class ResultSetMapperImpl implements ResultSetMapper {
 
   private <T> Object getSimpleFieldValue(Field entityField, ResultSet rs) {
     Object valueFromResultSet = getValueFromResultSet(rs, resolveFieldColumnName(entityField));
-    if (DateUtil.isDateField(entityField.getType())) {
+    if (isDateField(entityField.getType())) {
       return getDateFieldValue(entityField, valueFromResultSet);
     }
     return valueFromResultSet;

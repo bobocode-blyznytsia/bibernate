@@ -1,26 +1,22 @@
-package com.bobocode.blyznytsia.bibernate;
+package com.bobocode.blyznytsia.bibernate.testdata;
 
 import com.bobocode.blyznytsia.bibernate.annotation.Entity;
 import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.annotation.ManyToOne;
 import com.bobocode.blyznytsia.bibernate.annotation.Table;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
+@Getter
 @Entity
 @Table(name = "notes")
-@Setter
-@Getter
-@ToString(exclude = "user")
 public class Note {
 
   @Id
-  private Integer id;
+  private Long id;
 
   private String body;
 
-  @ManyToOne(joinColumnName = "user_id")
-  private User user;
+  @ManyToOne(joinColumnName = "person_id")
+  private PersonWithOneToMany person;
 
 }
