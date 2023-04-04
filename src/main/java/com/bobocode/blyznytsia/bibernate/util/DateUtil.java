@@ -63,12 +63,14 @@ public class DateUtil {
   public static Object getDateFieldValue(Field entityField, Object value) {
     log.debug("Convert date field '{}' to set field type {} with value {}.", entityField.getName(),
         entityField.getType(), value);
-    return switch (value) {
-      case Timestamp ignore -> getFieldValueForLocalDateTimeDependsOnFieldType(
-          entityField.getType(), ((Timestamp) value));
-      case Date ignore -> ((java.sql.Date) value).toLocalDate();
-      default -> throw NotSupportedException.sqlTypeIsNotSupported(entityField.getName());
-    };
+    if (value.getClass().equals(Timestamp.class)) {
+      return getFieldValueForLocalDateTimeDependsOnFieldType(entityField.getType(),
+          ((Timestamp) value));
+    } else if (value.getClass().equals(Date.class)) {
+      return ((java.sql.Date) value).toLocalDate();
+    } else {
+      throw NotSupportedException.sqlTypeIsNotSupported(entityField.getName());
+    }
   }
 
   private static Object getFieldValueForLocalDateTimeDependsOnFieldType(Class<?> fieldType,
