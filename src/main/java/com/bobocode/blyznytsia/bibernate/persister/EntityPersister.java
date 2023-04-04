@@ -20,7 +20,7 @@ public interface EntityPersister {
    * Searches for a single entity of the specified type that has the specified field value.
    *
    * @param entityType the type of entity to search for.
-   * @param key        the field to search for.
+   * @param key        the database column name to search for.
    * @param value      the value to search for in the specified field.
    * @return an {@code Optional} containing the found entity, or {@code Optional.empty()} if no entity was found.
    */
@@ -30,7 +30,7 @@ public interface EntityPersister {
    * Searches for all entities of the specified type that have the specified field value.
    *
    * @param entityType the type of entity to search for.
-   * @param key        the field to search for.
+   * @param key        the database column name to search for.
    * @param value      the value to search for in the specified field.
    * @return a {@code List} containing all found entities, or an empty list if no entities were found.
    */
