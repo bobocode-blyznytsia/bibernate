@@ -1,6 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.util;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.bobocode.blyznytsia.bibernate.testdata.EntityWIthMultipleNonIdFields;
 import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;

@@ -8,7 +8,6 @@ import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.exception.ResultSetMappingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

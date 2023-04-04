@@ -8,7 +8,6 @@ import com.bobocode.blyznytsia.bibernate.testdata.Address;
 import com.bobocode.blyznytsia.bibernate.testdata.PersonWithOneToOne;
 import com.bobocode.blyznytsia.bibernate.testdata.PlainPerson;
 import java.sql.ResultSet;
-
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

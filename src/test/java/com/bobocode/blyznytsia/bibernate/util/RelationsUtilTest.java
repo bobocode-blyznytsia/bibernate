@@ -11,9 +11,9 @@ import com.bobocode.blyznytsia.bibernate.annotation.ManyToOne;
 import com.bobocode.blyznytsia.bibernate.annotation.OneToMany;
 import com.bobocode.blyznytsia.bibernate.annotation.OneToOne;
 import com.bobocode.blyznytsia.bibernate.exception.MalformedEntityException;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Field;
 
 class RelationsUtilTest {
   private Field manyToOneField;
