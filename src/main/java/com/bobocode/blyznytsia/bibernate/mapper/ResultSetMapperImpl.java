@@ -68,7 +68,7 @@ public class ResultSetMapperImpl implements ResultSetMapper {
     }
   }
 
-  private <T> Object getSimpleFieldValue(Field entityField, ResultSet rs) {
+  private Object getSimpleFieldValue(Field entityField, ResultSet rs) {
     Object valueFromResultSet = getValueFromResultSet(rs, resolveFieldColumnName(entityField));
     if (isDateField(entityField.getType())) {
       return getDateFieldValue(entityField, valueFromResultSet);
