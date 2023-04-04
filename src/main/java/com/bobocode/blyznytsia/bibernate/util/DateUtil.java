@@ -36,7 +36,8 @@ public class DateUtil {
    */
   public static boolean isDateField(Class<?> fieldType) {
     if (isDateField(fieldType.getName())) {
-      return verifyTheFieldTypeIsSupported(fieldType);
+      checkFieldTypeIsSupported(fieldType);
+      return true;
     } else {
       return false;
     }
@@ -88,11 +89,9 @@ public class DateUtil {
     }
   }
 
-  private static boolean verifyTheFieldTypeIsSupported(Class<?> fieldType) {
-    if (fieldType.equals(LocalDateTime.class) || fieldType.equals(LocalDate.class)
-        || fieldType.equals(LocalTime.class) || fieldType.equals(Instant.class)) {
-      return true;
-    } else {
+  private static void checkFieldTypeIsSupported(Class<?> fieldType) {
+    if (!(fieldType.equals(LocalDateTime.class) || fieldType.equals(LocalDate.class)
+        || fieldType.equals(LocalTime.class) || fieldType.equals(Instant.class))) {
       throw NotSupportedException.fieldTypeIsNotSupported(fieldType);
     }
   }

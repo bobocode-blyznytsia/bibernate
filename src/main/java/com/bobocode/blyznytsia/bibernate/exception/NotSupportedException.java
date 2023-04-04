@@ -11,8 +11,8 @@ public class NotSupportedException extends BibernateException {
   }
 
   public static NotSupportedException fieldTypeIsNotSupported(Class<?> fieldType) {
-    return new NotSupportedException(String.format(
-        "Field type %s is not supported by Bibernate framework.", fieldType));
+    return new NotSupportedException("Field type %s is not supported by Bibernate framework."
+        .formatted(fieldType));
   }
 
   public static NotSupportedException sqlTypeIsNotSupported(String entityFieldName) {

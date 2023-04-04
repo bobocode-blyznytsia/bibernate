@@ -55,8 +55,8 @@ public class ResultSetMapperImpl implements ResultSetMapper {
       log.debug("Setting value '{}' for entity field '{}'.", value, entityField.getName());
       entityField.set(entity, value);
     } catch (IllegalAccessException ex) {
-      throw new BibernateException(String.format(
-          "Cannot access or change field %s", entityField.getName()), ex);
+      throw new BibernateException("Cannot access or change field %s"
+          .formatted(entityField.getName()), ex);
     }
   }
 

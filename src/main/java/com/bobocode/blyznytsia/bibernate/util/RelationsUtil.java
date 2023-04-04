@@ -27,30 +27,29 @@ public class RelationsUtil {
   }
 
   /**
-   * Checks provided join column name is not null or empty.
+   * Checks provided join column name is not null or blank.
    *
    * @param joinColumnName the join column name to check
    * @param entityFieldName the entity field name for which join column should be set
    * @throws MalformedEntityException when join column name is null or empty
    */
   public static void verifyJoinColumnNameIsNotEmpty(String joinColumnName, String entityFieldName) {
-    if (joinColumnName == null || joinColumnName.isEmpty()) {
-      throw new MalformedEntityException(
-          String.format("Join column name must be set for field %s", entityFieldName));
+    if (joinColumnName == null || joinColumnName.isBlank()) {
+      throw new MalformedEntityException("Join column name must be set for field %s"
+          .formatted(entityFieldName));
     }
   }
 
   /**
-   * Checks provided mapped by field is not null or empty.
+   * Checks provided mapped by field is not null or blank.
    *
    * @param mappedBy the mapped by field in child entity
    * @param entityFieldName the entity field name for which mapped by field should be set
    * @throws MalformedEntityException when mapped by field is null or empty
    */
   public static void verifyMappedByIsNotEmpty(String mappedBy, String entityFieldName) {
-    if (mappedBy == null || mappedBy.isEmpty()) {
-      throw new MalformedEntityException(
-          String.format("Mapped by must be set for field %s", entityFieldName));
+    if (mappedBy == null || mappedBy.isBlank()) {
+      throw new MalformedEntityException("Mapped by must be set for field %s".formatted(entityFieldName));
     }
   }
 
@@ -66,9 +65,9 @@ public class RelationsUtil {
     return Arrays.stream(entityFieldType.getDeclaredFields())
         .filter(field -> field.getName().equals(mappedBy))
         .findFirst()
-        .orElseThrow(() -> new MalformedEntityException(String.format(
-            "Field %s that was specified in mapped by in parent class doesn't exist in class %s",
-            mappedBy, entityFieldType.getName())));
+        .orElseThrow(() -> new MalformedEntityException(
+            "Field %s that was specified in mapped by in parent class doesn't exist in class %s"
+                .formatted(mappedBy, entityFieldType.getName())));
   }
 
 }

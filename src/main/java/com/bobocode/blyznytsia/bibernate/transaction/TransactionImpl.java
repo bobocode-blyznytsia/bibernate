@@ -74,7 +74,7 @@ public class TransactionImpl implements Transaction {
   public void rollback() {
     if (!canRollback()) {
       throw new IllegalStateException(
-          String.format("Cannot rollback transaction with status %s", status));
+          "Cannot rollback transaction with status %s".formatted(status));
     }
     log.debug("Rollback transaction");
     try {

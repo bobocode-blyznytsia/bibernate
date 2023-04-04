@@ -3,7 +3,7 @@ package com.bobocode.blyznytsia.bibernate.mapper;
 import java.sql.ResultSet;
 
 /**
- * The interface consists methods for mapping instance of {@link ResultSet} to entity.
+ * The interface contains methods for mapping instance of {@link ResultSet} to entity.
  * Supported mappings relation types: one-to-one, many-to-one and one-to-many.
  * All relations are eagerly fetched.
  */

@@ -62,7 +62,7 @@ class RelationsUtilTest {
   @Test
   void verifyMappedByIsNotEmptyWithEmptyMappedBy() {
     assertThrows(MalformedEntityException.class,
-        () -> RelationsUtil.verifyMappedByIsNotEmpty("", "entityFieldName"));
+        () -> RelationsUtil.verifyMappedByIsNotEmpty("    ", "entityFieldName"));
   }
 
   @Test
