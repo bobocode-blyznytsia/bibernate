@@ -20,6 +20,7 @@
         <logback-classic.version>1.4.5</logback-classic.version>
         <junit.version>5.9.0</junit.version>
         <mockito.version>4.11.0</mockito.version>
+        <assertj.version>3.24.2</assertj.version>
         <slf4j.version>2.0.6</slf4j.version>
         <hikari.version>5.0.1</hikari.version>
         <h2database.version>2.1.214</h2database.version>
@@ -66,6 +67,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
