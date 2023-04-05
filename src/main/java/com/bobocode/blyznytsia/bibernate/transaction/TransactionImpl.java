@@ -57,6 +57,7 @@ public class TransactionImpl implements Transaction {
     }
     log.debug("Commit transaction");
     try {
+      // FIXME session flush ?
       connection.commit();
       status = COMMITTED;
     } catch (SQLException e) {
@@ -96,6 +97,7 @@ public class TransactionImpl implements Transaction {
     return ACTIVE == getStatus();
   }
 
+  @Override
   public TransactionStatus getStatus() {
     return status;
   }

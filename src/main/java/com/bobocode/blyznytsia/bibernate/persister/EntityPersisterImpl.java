@@ -81,7 +81,7 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   @Override
-  public void update(Object entity) {
+  public <T> void update(T entity) {
     Objects.requireNonNull(entity);
     checkEntityNotTransient(entity);
     var updateStatementText = buildUpdateStatement(entity.getClass());
@@ -94,7 +94,7 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   @Override
-  public void delete(Object entity) {
+  public <T> void delete(T entity) {
     Objects.requireNonNull(entity);
     checkEntityNotTransient(entity);
     var deleteStatementText = buildDeleteStatement(entity.getClass());
