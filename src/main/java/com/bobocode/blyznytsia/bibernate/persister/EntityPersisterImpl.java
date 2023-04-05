@@ -64,7 +64,8 @@ public class EntityPersisterImpl implements EntityPersister {
   @Override
   public <T> Optional<T> findById(Class<T> entityType, Object id) {
     Objects.requireNonNull(id, "Entity id must not be null");
-    return findOneBy(entityType, EntityUtil.resolveEntityIdField(entityType).getName(), id);
+    String idColumnName = EntityUtil.resolveFieldColumnName(EntityUtil.resolveEntityIdField(entityType));
+    return findOneBy(entityType, idColumnName, id);
   }
 
   @Override
