@@ -33,8 +33,7 @@ public class SessionImpl implements Session {
 
 	private boolean opened;
 
-	public SessionImpl(Connection connection,
-		Consumer<Session> removeSessionConsumer) {
+	public SessionImpl(Connection connection, Consumer<Session> removeSessionConsumer) {
 		this.connection = connection;
 		this.removeSessionConsumer = removeSessionConsumer;
 		this.persistenceContext = new PersistenceContextImpl();
@@ -64,7 +63,7 @@ public class SessionImpl implements Session {
 				entityPersister.delete(entity);
 				// this.persistenceContext.deleteEntityCache //FIXME
 			} catch (PersistenceException e) {
-				log.error("Cannot remove entity of type {} with Id {}. Reason: {}", entity.getClass().getSimpleName(), entityIdValue, e.getMessage());
+				log.error("Cannot remove entity of type {} with Id {}. {}", entity.getClass().getSimpleName(), entityIdValue, e.getMessage());
 			}
 		} else {
 			var entityKey = new EntityKey<>(entity.getClass(), entityIdValue);
@@ -81,10 +80,20 @@ public class SessionImpl implements Session {
 		var entityKey = new EntityKey<>(entityClass, primaryKey);
 		Object cachedEntity = this.persistenceContext.getCachedEntity(entityKey);
 		if (cachedEntity == null) {
+			log.debug("Going to get entity of type {} with primary key {} from database.", entityKey.entityType(), entityKey.entityId());
 			cachedEntity = this.entityPersister.findById(entityClass, primaryKey)
-				.orElseThrow(() -> new BibernateException("Entity of type %s with Id %s is not found".formatted(entityClass.getSimpleName(), primaryKey)));
+				.orElseThrow(() -> new BibernateException("Entity of type %s with primary key = %s is not found".formatted(entityClass, primaryKey)));
 			this.persistenceContext.addEntityToCache(entityKey, cachedEntity);
 		}
+		return entityClass.cast(cachedEntity);
+	}
+
+	@Override
+	public <T> T findOneBy(Class<T> entityClass, String key, Object value) {
+		checkTransactionIsAccessible(() -> "Cannot find entity. Transaction is not active.");
+		var cachedEntity = this.entityPersister.findOneBy(entityClass, key, value)
+			.orElseThrow(() -> new BibernateException("Entity of type %s with %s = %s is not found".formatted(entityClass.getSimpleName(), key, value)));
+		this.persistenceContext.addEntityToCache(new EntityKey<>(entityClass, getEntityIdValue(cachedEntity)), cachedEntity);
 		return entityClass.cast(cachedEntity);
 	}
 
@@ -111,7 +120,7 @@ public class SessionImpl implements Session {
 		try {
 			this.connection.close();
 		} catch (SQLException e) {
-			throw new BibernateException("Cannot close database connection. Reason: " + e.getMessage());
+			throw new BibernateException("Cannot close database connection. " + e.getMessage());
 		}
 		this.opened = false;
 		this.removeSessionConsumer.accept(this);
@@ -124,16 +133,17 @@ public class SessionImpl implements Session {
 
 	@Override
 	public Transaction getTransaction() {
-		return this.transaction == null
-			? new TransactionImpl(null)
-			: this.transaction;
+		if (this.transaction == null) {
+			this.transaction = new TransactionImpl(this.connection);
+		}
+		return this.transaction;
 	}
 
 	private boolean isConnectionInAutoCommitMode() {
 		try {
 			return this.connection.getAutoCommit();
 		} catch (SQLException e) {
-			throw new BibernateException("Cannot get connection autocommit mode. Reason: " + e.getMessage());
+			throw new BibernateException("Cannot get connection autocommit mode. " + e.getMessage());
 		}
 	}
 
@@ -145,15 +155,17 @@ public class SessionImpl implements Session {
 
 	private void insert(Object entity) {
 		if (isConnectionInAutoCommitMode()) {
+			log.debug("Connection is set to auto commit mode. Going to insert entity to database.");
 			try {
 				Object insertedEntity = this.entityPersister.insert(entity);
 				this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), getEntityIdValue(insertedEntity)), insertedEntity);
 			} catch (PersistenceException e) {
-				log.error("Cannot insert entity of type {}. Reason: {}", entity.getClass().getSimpleName(), e.getMessage());
-				return;
+				log.error("Cannot insert entity of type {}. {}", entity.getClass(), e.getMessage());
 			}
+		} else {
+			log.debug("Adding entity {} of type {} to persistence context.", entity, entity.getClass());
+			this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), null), entity);
 		}
-		this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), null), entity);
 	}
 
 	private void update(Object entityIdValue,  Object entity) {
@@ -161,11 +173,12 @@ public class SessionImpl implements Session {
 			try {
 				this.entityPersister.update(entity);
 			} catch (PersistenceException e) {
-				log.error("Cannot update entity of type {} with Id {}. Reason: {}", entity.getClass().getSimpleName(), entityIdValue, e.getMessage());
-				return;
+				log.error("Cannot update entity of type {} with primary key = {}. {}", entity.getClass().getSimpleName(), entityIdValue, e.getMessage());
 			}
+		} else {
+			log.debug("Adding entity of type {} with primary key = {} to persistence context.", entity.getClass(), entityIdValue);
+			this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), entityIdValue), entity);
 		}
-		this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), entityIdValue), entity);
 	}
 
 }
