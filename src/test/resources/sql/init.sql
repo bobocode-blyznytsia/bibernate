@@ -7,8 +7,8 @@ CREATE TABLE sample_entity(
 INSERT INTO sample_entity( some_value)
 VALUES
     ('val1'),
-    ('val1'),
-    ('val2');
+    ('val2'),
+    ('val3');
 
 INSERT INTO sample_entity(id, some_value) VALUES (1001, 'recordToUpdate');
 
