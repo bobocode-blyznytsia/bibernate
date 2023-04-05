@@ -58,14 +58,14 @@ public class YamlPropertyReader implements PropertyReader {
       String propertyFile, String persistenceUnit) {
     ClassLoader contextClassLoader = this.getClass().getClassLoader();
 
-    log.trace("Looking up for the file: {}", propertyFile);
+    log.debug("Looking up for the file: {}", propertyFile);
     var propertiesFile = getPropertyFile(propertyFile, contextClassLoader);
 
     var mapper = new ObjectMapper(new YAMLFactory());
     PersistenceConfiguration configuration;
     try {
       configuration = mapper.readValue(propertiesFile, PersistenceConfiguration.class);
-      log.trace("resolved persistence properties from {} file", propertiesFile.getName());
+      log.debug("resolved persistence properties from {} file", propertiesFile.getName());
     } catch (UnrecognizedPropertyException ex) {
       throw new PersistencePropertyUnrecognizedException(ex.getMessage());
     } catch (IOException e) {
@@ -82,7 +82,7 @@ public class YamlPropertyReader implements PropertyReader {
       log.error(errorMessage);
       throw new PersistenceFileNotFoundException(errorMessage);
     }
-    log.info("found persistence configuration file {}", resourceName);
+    log.info("Found persistence configuration file {}", resourceName);
 
     return new File(propertyResource.getPath());
   }
@@ -98,7 +98,7 @@ public class YamlPropertyReader implements PropertyReader {
             .findAny()
             .orElseThrow(() -> new PersistenceUnitNotFoundException(
                 format("Persistence unit %s was not found", persistenceUnit)));
-    log.trace("Found and resolved configuration for persistence unit {} ", persistenceUnit);
+    log.debug("Found and resolved configuration for persistence unit {} ", persistenceUnit);
     return persistenceUnitConfiguration;
   }
 }
