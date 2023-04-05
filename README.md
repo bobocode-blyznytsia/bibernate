@@ -7,14 +7,14 @@
 ## Main features
 
 ## Provided annotations
-| Annotation    | Target                  | Description                                                                                                                                |
-|:--------------|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|
-| `@Entity`     | `TYPE`                  | *The annotation used to specify entity*                                                                                                    |
-| `@Id`         | `TYPE`                  | *The annotation used to mark primary key field of an entity. Each entity should contain exactly one field, annotated with such annotation* |
-| `@Table`      | `TYPE`                  | *The annotation used to specify a custom table name for an entity*                                                                         |
-| `@ManyToOne`  | `FIELD`                 | *The annotation is used to map many-to-one relationships with using reference types*                                                       |
-| `@OneToMany`  | `FIELD`                 | *The annotation is used to map bidirectional one-to-many relationships with using collection types*                                        |
-| `@OneToOne`   | `FIELD`                 | *The annotation is used to map one-to-one relationships with using reference types*                                                        |
-
+| Annotation     | Target   | Description                                                                                                                                |
+|:---------------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------|
+| `@Entity`      | `TYPE`   | *The annotation used to specify entity*                                                                                                    |
+| `@Id`          | `TYPE`   | *The annotation used to mark primary key field of an entity. Each entity should contain exactly one field, annotated with such annotation* |
+| `@Table`       | `TYPE`   | *The annotation used to specify a custom table name for an entity*                                                                         |
+| `@Column`      | `FIELD`  | *The annotation used to specify a custom column name for a field of an entity*                                                             |
+| `@ManyToOne`   | `FIELD`  | *The annotation is used to map many-to-one relationships with using reference types*                                                       |
+| `@OneToMany`   | `FIELD`  | *The annotation is used to map bidirectional one-to-many relationships with using collection types*                                        |
+| `@OneToOne`    | `FIELD`  | *The annotation is used to map one-to-one relationships with using reference types*                                                        |
 
 ## Get started
