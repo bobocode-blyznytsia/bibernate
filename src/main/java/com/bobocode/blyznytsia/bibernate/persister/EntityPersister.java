@@ -37,6 +37,30 @@ public interface EntityPersister {
   <T> List<T> findAllBy(Class<T> entityType, String key, Object value);
 
   /**
+   * Executes a query and returns a list of entities that match the given query and parameters.
+   *
+   * @param entityType the {@code Class} object representing the entity type
+   * @param query      the SQL query to execute
+   * @param params     the parameters for the query
+   * @return a {@code List} of entities that match the given query and parameters
+   */
+  <T> List<T> findAllByQuery(Class<T> entityType, String query, Object... params);
+
+  /**
+   * Executes a query and returns an {@code Optional} containing a single entity that matches
+   * the given query and parameters.
+   * If the query returns more than one entity, a {@code PersistenceException} is thrown.
+   *
+   * @param entityType the {@code Class} object representing the entity type
+   * @param query      the SQL query to execute
+   * @param params     the parameters for the query
+   * @return an {@code Optional} containing a single entity that matches the given query and parameters,
+   *     or an empty {@code Optional} if no result is found
+   */
+  <T> Optional<T> findOneByQuery(Class<T> entityType, String query, Object... params);
+
+
+  /**
    * Inserts a new entity into the database.
    *
    * @param entity the entity to insert.
