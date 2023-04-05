@@ -11,9 +11,9 @@ import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
 import com.bobocode.blyznytsia.bibernate.exception.TransientEntityException;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementConsumer;
 import com.bobocode.blyznytsia.bibernate.lambda.StatementFunction;
+import com.bobocode.blyznytsia.bibernate.mapper.ResultSetMapper;
+import com.bobocode.blyznytsia.bibernate.mapper.ResultSetMapperImpl;
 import com.bobocode.blyznytsia.bibernate.util.EntityUtil;
-import com.bobocode.blyznytsia.bibernate.util.ResultSetMapper;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,13 +32,13 @@ public class EntityPersisterImpl implements EntityPersister {
   private final Connection connection;
   private final ResultSetMapper resultSetMapper;
 
-  public EntityPersisterImpl(Connection connection, ResultSetMapper resultSetMapper) {
+  public EntityPersisterImpl(Connection connection) {
     this.connection = connection;
-    this.resultSetMapper = resultSetMapper;
+    this.resultSetMapper = new ResultSetMapperImpl(this);
   }
 
   @Override
-  public <T> List<T> findAllBy(Class<T> entityType, Field key, Object value) {
+  public <T> List<T> findAllBy(Class<T> entityType, String key, Object value) {
     var entities = new ArrayList<T>();
     var statementText = buildSelectStatement(entityType, key);
     return performWithinStatement(statementText, statement -> {
@@ -53,7 +53,7 @@ public class EntityPersisterImpl implements EntityPersister {
 
 
   @Override
-  public <T> Optional<T> findOneBy(Class<T> entityType, Field key, Object value) {
+  public <T> Optional<T> findOneBy(Class<T> entityType, String key, Object value) {
     List<T> entitiesFound = findAllBy(entityType, key, value);
     if (entitiesFound.size() > 1) {
       throw new PersistenceException("Query returned more than one entity");
@@ -64,7 +64,8 @@ public class EntityPersisterImpl implements EntityPersister {
   @Override
   public <T> Optional<T> findById(Class<T> entityType, Object id) {
     Objects.requireNonNull(id, "Entity id must not be null");
-    return findOneBy(entityType, EntityUtil.resolveEntityIdField(entityType), id);
+    String idColumnName = EntityUtil.resolveFieldColumnName(EntityUtil.resolveEntityIdField(entityType));
+    return findOneBy(entityType, idColumnName, id);
   }
 
   @Override

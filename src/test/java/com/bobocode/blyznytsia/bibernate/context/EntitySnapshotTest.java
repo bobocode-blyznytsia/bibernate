@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithCollection;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWithEntitiesCollection;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.NestedEntity;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.EntityWithEntitiesCollection;
+import com.bobocode.blyznytsia.bibernate.testdata.NestedEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;

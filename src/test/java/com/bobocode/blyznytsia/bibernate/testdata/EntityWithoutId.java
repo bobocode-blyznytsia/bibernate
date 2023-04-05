@@ -1,4 +1,4 @@
-package com.bobocode.blyznytsia.bibernate.testdata.entity;
+package com.bobocode.blyznytsia.bibernate.testdata;
 
 import com.bobocode.blyznytsia.bibernate.annotation.Entity;
 

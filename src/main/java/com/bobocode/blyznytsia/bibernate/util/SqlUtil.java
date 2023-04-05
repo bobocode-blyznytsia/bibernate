@@ -6,7 +6,6 @@ import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.resolveEntityTab
 import static com.bobocode.blyznytsia.bibernate.util.EntityUtil.resolveFieldColumnName;
 import static java.util.stream.Collectors.joining;
 
-import java.lang.reflect.Field;
 import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 
@@ -43,13 +42,12 @@ public class SqlUtil {
   /**
    * Builds an SQL SELECT statement for the given entity type and key field.
    *
-   * @param entityType the entity type for which to build the statement
-   * @param key        the key field used for the WHERE clause
+   * @param entityType        the entity type for which to build the statement
+   * @param searchColumnName  the column name used for the WHERE clause
    * @return the SQL SELECT statement
    */
-  public static String buildSelectStatement(Class<?> entityType, Field key) {
+  public static String buildSelectStatement(Class<?> entityType, String searchColumnName) {
     var tableName = resolveEntityTableName(entityType);
-    var searchColumnName = resolveFieldColumnName(key);
     return SELECT_STATEMENT_TEMPLATE.formatted(tableName, searchColumnName);
   }
 

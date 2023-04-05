@@ -3,7 +3,7 @@ package com.bobocode.blyznytsia.bibernate.context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bobocode.blyznytsia.bibernate.model.EntityKey;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
