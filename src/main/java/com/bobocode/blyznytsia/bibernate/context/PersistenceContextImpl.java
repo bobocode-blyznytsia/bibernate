@@ -4,6 +4,7 @@ import com.bobocode.blyznytsia.bibernate.model.EntityKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Stores entity snapshots and manages a cache of entities using their EntityKeys.
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
  * and add entities to the cache.
  */
 @SuppressWarnings("rawtypes")
+@Slf4j
 public class PersistenceContextImpl implements PersistenceContext {
 
   private final Map<EntityKey, EntitySnapshot> entitySnapshots = new HashMap<>();
@@ -25,7 +27,14 @@ public class PersistenceContextImpl implements PersistenceContext {
 
   @Override
   public Object getCachedEntity(EntityKey entityKey) {
-    return entityCache.get(entityKey);
+    log.debug("Looking up entity of type {} with primary key value = {} from persistence context. ", entityKey.entityType(), entityKey.entityId());
+    var entity = entityCache.get(entityKey);
+    if (entity == null) {
+      log.debug("Entity of type {} with primary key value = {} is not found in persistence context.", entityKey.entityType(), entityKey.entityId());
+    } else {
+      log.debug("Returning entity of type {} with primary key value = {} from persistence context.", entityKey.entityType(), entityKey.entityId());
+    }
+    return entity;
   }
 
   @Override
