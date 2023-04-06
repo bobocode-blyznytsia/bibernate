@@ -45,8 +45,36 @@ public class PersistenceContextImpl implements PersistenceContext {
     entitySnapshots.put(entityKey, new EntitySnapshot(entity));
   }
 
+  @Override
+  public void deleteEntityFromCache(EntityKey entityKey) {
+    entityCache.remove(entityKey);
+    entitySnapshots.remove(entityKey);
+  }
+
+  @Override
+  public void markForDeletion(EntityKey entityKey, Object entity) {
+      entityCache.put(entityKey, null);
+      entitySnapshots.put(entityKey, new EntitySnapshot(entity));
+  }
+
+  @Override
+  public void markForInsert(EntityKey entityKey, Object entity) {
+    entityCache.put(entityKey, entity);
+    entitySnapshots.put(entityKey, null);
+  }
+
+  @Override
+  public void markForUpdate(EntityKey entityKey,  Object entity) {
+    if (!entityCache.containsKey(entityKey)) {
+      markForInsert(entityKey, entity);
+    }
+  }
+
   private boolean isEntityDirty(EntityKey entityKey) {
     EntitySnapshot entitySnapshot = entitySnapshots.get(entityKey);
+    if (entitySnapshot == null) {
+      return true;
+    }
     Object entity = entityCache.get(entityKey);
     return entitySnapshot.isDirty(entity);
   }

@@ -62,17 +62,15 @@ public class SessionImpl implements Session {
 		if (isConnectionInAutoCommitMode()) {
 			try {
 				entityPersister.delete(entity);
-				// this.persistenceContext.deleteEntityCache //FIXME
+				log.debug("Removing entity of type {} with primary key = {}", entity.getClass(), entityIdValue);
+				persistenceContext.deleteEntityFromCache(new EntityKey(entity.getClass(), entityIdValue));
 			} catch (PersistenceException e) {
-				log.error("Cannot remove entity of type {} with Id {}. {}", entity.getClass().getSimpleName(), entityIdValue, e.getMessage());
-			}
-		} else {
-			var entityKey = new EntityKey<>(entity.getClass(), entityIdValue);
-			Object cachedEntity = this.persistenceContext.getCachedEntity(entityKey); // TODO return optional, will it help to improve code ?
-			if (cachedEntity != null) {
-				this.persistenceContext.addEntityToCache(entityKey, null);
+				log.error("Cannot remove entity of type {} with primary key={}. {}", entity.getClass(), entityIdValue, e.getMessage());
+				return;
 			}
 		}
+		log.debug("Removing entity of type {} with primary key{}", entity.getClass(), entityIdValue); // FIX logging
+		persistenceContext.markForDeletion(new EntityKey(entity.getClass(), entityIdValue), entity);
 	}
 
 	@Override
@@ -104,19 +102,23 @@ public class SessionImpl implements Session {
 
 		Map<EntityKey, Object> entityKeyObjectMap = this.persistenceContext.dirtyCheck();
 		entityKeyObjectMap.forEach((key, object) -> {
+			// 10
 			if (key.entityId() == null) {
-				this.insert(object);
+				this.entityPersister.insert(object);
 			} else if (object == null) {
 				entityPersister.delete(object); // FIXME change entityPersister's signature ?
 				// this.persistenceContext.deleteEntityCache // FIXME ask Sergii
 			} else {
-				this.update(object, key);
+				this.entityPersister.update(object);
 			}
 		});
+
+		// synchronize snapshot and cache
 	}
 
 	@Override
 	public void close() {
+		flush();
 		try {
 			this.connection.close();
 		} catch (SQLException e) {
@@ -165,7 +167,7 @@ public class SessionImpl implements Session {
 				return;
 			}}
 		log.debug("Adding entity {} of type {} to persistence context", entity, entity.getClass());
-		this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), entityIdValue), entity);
+		this.persistenceContext.markForInsert(new EntityKey(entity.getClass(), entityIdValue), entity);
 	}
 
 	private void update(Object entityIdValue, Object entity) {
@@ -178,7 +180,7 @@ public class SessionImpl implements Session {
 			}
 		}
 		log.debug("Adding entity of type {} with primary key={} to persistence context", entity.getClass(), entityIdValue);
-		this.persistenceContext.addEntityToCache(new EntityKey(entity.getClass(), entityIdValue), entity);
+		this.persistenceContext.markForUpdate(new EntityKey(entity.getClass(), entityIdValue), entity);
 	}
 
 }

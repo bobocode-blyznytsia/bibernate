@@ -56,7 +56,7 @@ class SessionImplIT {
 	class Delete {
 		@Test
 		void deleteInAutoCommitMode() {
-			SampleEntity entity = new SampleEntity(1L, "val1");
+			SampleEntity entity = new SampleEntity(1L, "val1"); // detached
 
 			session.remove(entity);
 
@@ -66,8 +66,8 @@ class SessionImplIT {
 
 		@Test
 		void deleteInTransactionWithCommit() {
-			SampleEntity entity = new SampleEntity(1L, "val1");
-
+			SampleEntity entity = new SampleEntity(1L, "val1");  // just forbid case when entity is in detached state
+ //
 			session.getTransaction().begin();
 			session.remove(entity);
 			session.getTransaction().commit();
@@ -93,9 +93,8 @@ class SessionImplIT {
 
 		@Test
 		void insertInTransactionWithCommit() {
-			long entityId = 10L;
 			var entityToInsert = new SampleEntity();
-			entityToInsert.setId(entityId);
+			entityToInsert.setId(10L); // just forbid this case
 			entityToInsert.setSomeValue("Text here");
 
 			session.getTransaction().begin();
