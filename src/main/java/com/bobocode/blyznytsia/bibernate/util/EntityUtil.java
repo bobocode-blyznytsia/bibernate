@@ -124,6 +124,7 @@ public class EntityUtil {
    * @return created entity instance of given entity class
    * @throws EntityCreationException when faced with issue while creating entity instance
    */
+  @SuppressWarnings("unchecked")
   public static  <T> T createEntity(Class<T> entityType) {
     Constructor<?> constructor = getEntityDefaultConstructor(entityType);
     try {
