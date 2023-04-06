@@ -27,12 +27,14 @@ public class PersistenceContextImpl implements PersistenceContext {
 
   @Override
   public Object getCachedEntity(EntityKey entityKey) {
-    log.debug("Looking up entity of type {} with primary key value = {} from persistence context. ", entityKey.entityType(), entityKey.entityId());
+    Class entityType = entityKey.entityType();
+    Object entityId = entityKey.entityId();
+    log.debug("Looking up entity of type {} with primary key={} from persistence context", entityType, entityId);
     var entity = entityCache.get(entityKey);
     if (entity == null) {
-      log.debug("Entity of type {} with primary key value = {} is not found in persistence context.", entityKey.entityType(), entityKey.entityId());
+      log.debug("Entity of type {} with primary key={} is not found in persistence context", entityType, entityId);
     } else {
-      log.debug("Returning entity of type {} with primary key value = {} from persistence context.", entityKey.entityType(), entityKey.entityId());
+      log.debug("Returning entity of type {} with primary key={} from persistence context", entityType, entityId);
     }
     return entity;
   }
