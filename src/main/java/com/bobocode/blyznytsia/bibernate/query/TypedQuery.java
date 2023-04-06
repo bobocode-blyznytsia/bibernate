@@ -53,11 +53,15 @@ public class TypedQuery<T> implements Query<T> {
     return entityPersister.findOneByQuery(entityType, jdbcQuery, params);
   }
 
-
   @Override
   public List<T> getResultList() {
     verifyAllParamsAreSet();
     return entityPersister.findAllByQuery(entityType, jdbcQuery, params);
+  }
+
+  @Override
+  public int getParamsCount(){
+    return params.length;
   }
 
   private void verifyAllParamsAreSet() {

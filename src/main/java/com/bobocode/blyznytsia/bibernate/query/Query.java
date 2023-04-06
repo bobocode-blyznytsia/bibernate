@@ -44,4 +44,11 @@ public interface Query<T> {
    * @throws MissingParamsException if any of the query parameters were not set
    */
   List<T> getResultList();
+
+  /**
+   * Returns total amount of parameters of query
+   *
+   * @return count of parameters
+   */
+  int getParamsCount();
 }
