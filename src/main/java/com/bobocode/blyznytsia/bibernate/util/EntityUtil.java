@@ -6,17 +6,22 @@ import com.bobocode.blyznytsia.bibernate.annotation.Column;
 import com.bobocode.blyznytsia.bibernate.annotation.Id;
 import com.bobocode.blyznytsia.bibernate.annotation.Table;
 import com.bobocode.blyznytsia.bibernate.exception.BibernateException;
+import com.bobocode.blyznytsia.bibernate.exception.EntityCreationException;
 import com.bobocode.blyznytsia.bibernate.exception.MalformedEntityException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility class for performing common operations with entities
  */
 @UtilityClass
+@Slf4j
 public class EntityUtil {
 
   /**
@@ -67,13 +72,25 @@ public class EntityUtil {
   }
 
   /**
-   * Returns a list of non-primary-key fields for an entity object.
+   * Returns a list of fields for provided entity class.
+   *
+   * @param entityType the entity class to get the fields from
+   * @return a list of fields for provided entity object
+   */
+  public static List<Field> getEntityFields(Class<?> entityType) {
+    return Arrays.stream(entityType.getDeclaredFields())
+        .toList();
+  }
+
+  /**
+   * Returns a list of non-primary-key fields for an entity class.
    *
    * @param entityType the entity class to get the fields for
    * @return a list of non-primary-key fields for the given entityType
    */
   public static List<Field> getEntityNonIdFields(Class<?> entityType) {
-    return Arrays.stream(entityType.getDeclaredFields())
+    return getEntityFields(entityType)
+        .stream()
         .filter(field -> !field.isAnnotationPresent(Id.class))
         .toList();
   }
@@ -98,6 +115,39 @@ public class EntityUtil {
    */
   public static Object getEntityIdValue(Object entity) {
     return getFieldValue(resolveEntityIdField(entity.getClass()), entity);
+  }
+
+  /**
+   * Returns entity instance of given entity class.
+   *
+   * @param entityType the entity class
+   * @return created entity instance of given entity class
+   * @throws EntityCreationException when faced with issue while creating entity instance
+   */
+  @SuppressWarnings("unchecked")
+  public static  <T> T createEntity(Class<T> entityType) {
+    Constructor<?> constructor = getEntityDefaultConstructor(entityType);
+    try {
+      log.debug("Creating entity instance.");
+      return (T) constructor.newInstance();
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new EntityCreationException("Failed to create entity.", ex);
+    }
+  }
+
+  /**
+   * Returns default constructor of provided entity class.
+   *
+   * @param entityType the entity class to get the default constructor from
+   * @return default constructor of specified entity class
+   * @throws EntityCreationException when default constructor is not present in entity class
+   */
+  private static <T> Constructor<?> getEntityDefaultConstructor(Class<T> entityType) {
+    log.debug("Getting default constructor for class {}.", entityType.getName());
+    return Arrays.stream(entityType.getDeclaredConstructors())
+        .filter(c -> c.getParameterCount() == 0)
+        .findFirst()
+        .orElseThrow(() -> new EntityCreationException(entityType));
   }
 
   private Object getFieldValue(Field field, Object obj) {

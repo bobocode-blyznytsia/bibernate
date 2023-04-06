@@ -1,9 +1,9 @@
 package com.bobocode.blyznytsia.bibernate.util;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.bobocode.blyznytsia.bibernate.testdata.entity.EntityWIthMultipleNonIdFields;
-import com.bobocode.blyznytsia.bibernate.testdata.entity.SampleEntity;
+import com.bobocode.blyznytsia.bibernate.testdata.EntityWIthMultipleNonIdFields;
+import com.bobocode.blyznytsia.bibernate.testdata.SampleEntity;
 import org.junit.jupiter.api.Test;
 
 class SqlUtilTest {
@@ -17,7 +17,7 @@ class SqlUtilTest {
   @Test
   void buildSelectStatementTest() throws NoSuchFieldException {
     var key = SampleEntity.class.getDeclaredField("id");
-    assertEquals(CORRECT_SELECT_STMT, SqlUtil.buildSelectStatement(SampleEntity.class, key));
+    assertEquals(CORRECT_SELECT_STMT, SqlUtil.buildSelectStatement(SampleEntity.class, key.getName()));
   }
 
   @Test
