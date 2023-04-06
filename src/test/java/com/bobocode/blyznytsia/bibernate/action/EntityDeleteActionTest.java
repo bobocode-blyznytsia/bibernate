@@ -1,5 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.action;
 
+import static com.bobocode.blyznytsia.bibernate.action.ActionPriority.DELETE_PRIORITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
@@ -34,8 +35,8 @@ class EntityDeleteActionTest {
 
   @Test
   void getActionPriorityTest() {
-    ActionPriorityEnum actionPriorityEnum = entityDeleteAction.getPriority();
+    ActionPriority actionPriority = entityDeleteAction.getPriority();
 
-    assertEquals(ActionPriorityEnum.DELETE_PRIORITY, actionPriorityEnum);
+    assertEquals(DELETE_PRIORITY, actionPriority);
   }
 }

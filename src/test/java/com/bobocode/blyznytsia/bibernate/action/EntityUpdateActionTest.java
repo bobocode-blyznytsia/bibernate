@@ -1,5 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.action;
 
+import static com.bobocode.blyznytsia.bibernate.action.ActionPriority.UPDATE_PRIORITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
@@ -35,8 +36,8 @@ class EntityUpdateActionTest {
 
   @Test
   void getActionPriorityTest() {
-    ActionPriorityEnum actionPriorityEnum = entityUpdateAction.getPriority();
+    ActionPriority actionPriority = entityUpdateAction.getPriority();
 
-    assertEquals(ActionPriorityEnum.UPDATE_PRIORITY, actionPriorityEnum);
+    assertEquals(UPDATE_PRIORITY, actionPriority);
   }
 }

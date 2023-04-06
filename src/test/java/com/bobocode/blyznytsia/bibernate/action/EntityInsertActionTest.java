@@ -36,8 +36,8 @@ class EntityInsertActionTest {
 
   @Test
   void getActionPriorityTest() {
-    ActionPriorityEnum actionPriorityEnum = entityInsertAction.getPriority();
+    ActionPriority actionPriority = entityInsertAction.getPriority();
 
-    assertEquals(ActionPriorityEnum.INSERT_PRIORITY, actionPriorityEnum);
+    assertEquals(ActionPriority.INSERT_PRIORITY, actionPriority);
   }
 }

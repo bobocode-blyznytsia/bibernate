@@ -14,8 +14,8 @@ public interface EntityAction {
   /**
    * Get priority for action
    *
-   * @return {@link ActionPriorityEnum action priority}
+   * @return {@link ActionPriority action priority}
    */
-  ActionPriorityEnum getPriority();
+  ActionPriority getPriority();
 }
 

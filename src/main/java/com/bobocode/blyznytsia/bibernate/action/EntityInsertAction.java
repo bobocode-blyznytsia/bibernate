@@ -1,5 +1,7 @@
 package com.bobocode.blyznytsia.bibernate.action;
 
+import static com.bobocode.blyznytsia.bibernate.action.ActionPriority.INSERT_PRIORITY;
+
 import com.bobocode.blyznytsia.bibernate.persister.EntityPersister;
 import lombok.RequiredArgsConstructor;
 
@@ -24,8 +26,8 @@ public class EntityInsertAction implements EntityAction {
    * @see EntityAction#getPriority() for more information
    */
   @Override
-  public ActionPriorityEnum getPriority() {
-    return ActionPriorityEnum.INSERT_PRIORITY;
+  public ActionPriority getPriority() {
+    return INSERT_PRIORITY;
   }
 }
 

@@ -1,5 +1,7 @@
 package com.bobocode.blyznytsia.bibernate.action;
 
+import static com.bobocode.blyznytsia.bibernate.action.ActionPriority.DELETE_PRIORITY;
+
 import com.bobocode.blyznytsia.bibernate.persister.EntityPersister;
 import lombok.RequiredArgsConstructor;
 
@@ -24,8 +26,8 @@ public class EntityDeleteAction implements EntityAction {
    * @see EntityAction#getPriority() for more information
    */
   @Override
-  public ActionPriorityEnum getPriority() {
-    return ActionPriorityEnum.DELETE_PRIORITY;
+  public ActionPriority getPriority() {
+    return DELETE_PRIORITY;
   }
 }
 
