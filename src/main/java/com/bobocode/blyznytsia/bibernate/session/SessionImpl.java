@@ -9,6 +9,8 @@ import com.bobocode.blyznytsia.bibernate.exception.PersistenceException;
 import com.bobocode.blyznytsia.bibernate.model.EntityKey;
 import com.bobocode.blyznytsia.bibernate.persister.EntityPersister;
 import com.bobocode.blyznytsia.bibernate.persister.EntityPersisterImpl;
+import com.bobocode.blyznytsia.bibernate.query.Query;
+import com.bobocode.blyznytsia.bibernate.query.TypedQuery;
 import com.bobocode.blyznytsia.bibernate.transaction.Transaction;
 import com.bobocode.blyznytsia.bibernate.transaction.TransactionImpl;
 import java.sql.Connection;
@@ -181,4 +183,8 @@ public class SessionImpl implements Session {
 		}
 	}
 
+	@Override
+	public <T> Query<T> createNativeQuery(String sql, Class<T> entityType) {
+		return new TypedQuery<>(entityType, sql, entityPersister);
+	}
 }

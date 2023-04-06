@@ -40,7 +40,7 @@ class SessionImplIT {
 		@Test
 		void findBy() {
 			SampleEntity actualEntity = session.findOneBy(SampleEntity.class, "some_value", "val2");
-			SampleEntity expectedEntity = new SampleEntity(2L, "val2");
+			SampleEntity expectedEntity = new SampleEntity(3L, "val2");
 			assertEquals(expectedEntity, actualEntity);
 		}
 	}

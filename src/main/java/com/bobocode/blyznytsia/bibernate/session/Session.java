@@ -1,5 +1,6 @@
 package com.bobocode.blyznytsia.bibernate.session;
 
+import com.bobocode.blyznytsia.bibernate.query.Query;
 import com.bobocode.blyznytsia.bibernate.transaction.Transaction;
 
 public interface Session {
@@ -18,5 +19,7 @@ public interface Session {
   boolean isOpen();
 
   Transaction getTransaction();
+
+  <T> Query<T> createNativeQuery(String sql, Class<T> entityType);
 
 }
