@@ -11,7 +11,7 @@ class CaseUtilTest {
 
   @ParameterizedTest
   @MethodSource("com.bobocode.blyznytsia.bibernate.util.CaseUtilTest#camelCaseToSnakeCaseValues")
-  void camelToSnakeCase(Map.Entry<String,String> entry) {//@Todo: parametrize
+  void camelToSnakeCase(Map.Entry<String,String> entry) {
     assertEquals(entry.getValue(), CaseUtil.camelToSnakeCase(entry.getKey()));
   }
 

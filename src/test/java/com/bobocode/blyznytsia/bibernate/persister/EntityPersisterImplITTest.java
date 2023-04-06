@@ -108,6 +108,52 @@ class EntityPersisterImplITTest {
   }
 
   @Nested
+  class FinOneByQuery {
+    @Test
+    void returnsEntityIfPresent() {
+      var searchParam = "val2";
+      var expectedEntity = new SampleEntity(3L, searchParam);
+      var sql = "SELECT * FROM sample_entity where some_value = ?";
+      var actualEntityOptional = entityPersister.findOneByQuery(SampleEntity.class, sql, searchParam);
+      assertTrue(actualEntityOptional.isPresent());
+      assertEquals(expectedEntity, actualEntityOptional.get());
+    }
+    @Test
+    void returnsEmptyOptionalIfNoValuePresent() {
+      var sql = "SELECT * FROM sample_entity WHERE FALSE";
+      var actualEntityOptional = entityPersister.findOneByQuery(SampleEntity.class, sql);
+      assertTrue(actualEntityOptional.isEmpty());
+    }
+
+    @Test
+    void throwsPersistenceExceptionIfMultipleValuesFound() {
+      var searchParam = "val1"; // there are 2 records with such value in the DB
+      var sql = "SELECT * FROM sample_entity where some_value = ?";
+      assertThrows(PersistenceException.class,() -> entityPersister.findOneByQuery(SampleEntity.class, sql, searchParam));
+    }
+  }
+
+  @Nested
+  class FindAllByQuery{
+    @Test
+    void returnsListOfValuesByKey() {
+      var expectedList = List.of(
+          new SampleEntity(1L, "val1"),
+          new SampleEntity(2L, "val1")
+      );
+      var sql = "SELECT * FROM sample_entity WHERE some_value = ?";
+      var actualList = entityPersister.findAllByQuery(SampleEntity.class, sql , "val1");
+      assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void returnsEmptyListIfNoRecordsFound() {
+      var sql = "SELECT * FROM sample_entity WHERE FALSE";
+      var results = entityPersister.findAllByQuery(SampleEntity.class, sql);
+      assertTrue(results.isEmpty());
+    }
+  }
+  @Nested
   class Insert {
     @Test
     void persistsDataInTheDatabase() {
@@ -171,7 +217,7 @@ class EntityPersisterImplITTest {
     try (var stmt = connection.prepareStatement("SELECT * FROM sample_entity WHERE id = ?")) {
       stmt.setLong(1, id);
       var rs = stmt.executeQuery();
-      if(rs.next()) {
+      if (rs.next()) {
         return Optional.of(
             new ResultSetMapperImpl(entityPersister).mapToEntity(rs, SampleEntity.class));
       } else {

@@ -38,17 +38,30 @@ public class EntityPersisterImpl implements EntityPersister {
   }
 
   @Override
-  public <T> List<T> findAllBy(Class<T> entityType, String key, Object value) {
+  public <T> List<T> findAllByQuery(Class<T> entityType, String query, Object... params) {
     var entities = new ArrayList<T>();
-    var statementText = buildSelectStatement(entityType, key);
-    return performWithinStatement(statementText, statement -> {
-      fillStmtWildcards(statement, value);
+    return performWithinStatement(query, statement -> {
+      fillStmtWildcards(statement, params);
       var rs = statement.executeQuery();
       while (rs.next()) {
         entities.add(resultSetMapper.mapToEntity(rs, entityType));
       }
       return entities;
     });
+  }
+
+  @Override
+  public <T> Optional<T> findOneByQuery(Class<T> entityType, String query, Object... params) {
+    List<T> entitiesFound = findAllByQuery(entityType, query, params);
+    if (entitiesFound.size() > 1) {
+      throw new PersistenceException("Query returned more than one entity");
+    }
+    return entitiesFound.stream().findFirst();
+  }
+
+  @Override
+  public <T> List<T> findAllBy(Class<T> entityType, String key, Object value) {
+    return findAllByQuery(entityType, buildSelectStatement(entityType, key), value);
   }
 
 
@@ -144,7 +157,6 @@ public class EntityPersisterImpl implements EntityPersister {
       throw new PersistenceException("Unable to assign a generated key for the entity", e);
     }
   }
-
 
   private void checkEntityNotTransient(Object entity) {
     var id = getEntityIdValue(entity);
