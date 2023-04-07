@@ -116,6 +116,8 @@ transaction.rollback();
   This method is used to obtain the current transaction associated with the session.
 
 #### Mapping example
+Currently, mapping is supported only for read operations.
+Default fetch type is `EAGER`.
 ```java
 @Entity
 @Table(name = "persons")
