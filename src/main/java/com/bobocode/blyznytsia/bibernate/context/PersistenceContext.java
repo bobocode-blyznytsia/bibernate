@@ -33,5 +33,19 @@ public interface PersistenceContext {
    * @param entity The entity to be added to the cache.
    */
   void addEntityToCache(EntityKey entityKey, Object entity);
+
+  /**
+   * Removes an entity from the cache.
+   *
+   * @param entityKey The EntityKey used to identify the entity in the cache.
+   */
+  void deleteEntityFromCache(EntityKey entityKey);
+
+  // TODO add javadoc
+  void markForDeletion(EntityKey entityKey, Object entity);
+
+  void markForInsert(EntityKey entityKey, Object entity);
+
+  void markForUpdate(EntityKey entityKey,  Object entity);
 }
 

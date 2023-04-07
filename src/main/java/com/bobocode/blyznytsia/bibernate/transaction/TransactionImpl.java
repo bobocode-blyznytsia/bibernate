@@ -8,6 +8,7 @@ import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.NO
 import static com.bobocode.blyznytsia.bibernate.transaction.TransactionStatus.ROLLED_BACK;
 
 import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
+import com.bobocode.blyznytsia.bibernate.session.Session;
 import java.sql.Connection;
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TransactionImpl implements Transaction {
   private final Connection connection;
+  private final Session session;
 
   private TransactionStatus status;
 
-  public TransactionImpl(Connection connection) {
+  public TransactionImpl(Connection connection, Session session) {
     this.connection = connection;
+    this.session = session;
     this.status = NOT_ACTIVE;
   }
 
@@ -57,7 +60,7 @@ public class TransactionImpl implements Transaction {
     }
     log.debug("Commit transaction");
     try {
-      // FIXME session flush ?
+      session.flush();
       connection.commit();
       status = COMMITTED;
     } catch (SQLException e) {
