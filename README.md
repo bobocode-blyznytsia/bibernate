@@ -7,6 +7,7 @@
 ## Main features
 - Configuration
   - Read data source configuration from yaml file
+  - Multiple persistence units are supported
   - Builds Hikari DataSource pool
 - Mapping to provide metadata for ORM
 - First level cache for session
