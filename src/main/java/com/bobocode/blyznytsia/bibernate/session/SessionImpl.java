@@ -94,7 +94,7 @@ public class SessionImpl implements Session {
   public <T> T findOneBy(Class<T> entityClass, String key, Object value) {
     checkTransactionIsAccessible(() -> "Cannot find entity. Transaction is not active");
     var cachedEntity = this.entityPersister.findOneBy(entityClass, key, value)
-        .orElseThrow(() -> new EntityNotFoundException(entityClass,  key, value));
+        .orElseThrow(() -> new EntityNotFoundException(entityClass, key, value));
     var entityKey = new EntityKey<>(entityClass, getEntityIdValue(cachedEntity));
     this.persistenceContext.addEntityToCache(entityKey, cachedEntity);
     return entityClass.cast(cachedEntity);
@@ -188,11 +188,11 @@ public class SessionImpl implements Session {
     this.persistenceContext.markForUpdate(entityKey, entity);
   }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> Query<T> createNativeQuery(String sql, Class<T> entityType) {
-		return new TypedQuery<>(entityType, sql, entityPersister);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public <T> Query<T> createNativeQuery(String sql, Class<T> entityType) {
+    return new TypedQuery<>(entityType, sql, entityPersister);
+  }
 }

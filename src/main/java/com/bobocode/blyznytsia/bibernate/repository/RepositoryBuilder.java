@@ -16,10 +16,10 @@ public class RepositoryBuilder {
   /**
    * Generate dymanic proxy implementation for repository R handling entity E
    *
-   * @param repository
-   * @param entityType
+   * @param repository - Intefrace extending  {@link BibernateReadonlyRepository}
+   * @param entityType - the type of entity to be operated within the generated repository
    * @return an instance of repository R implementing all the methods folowing convention
-   *         described in {@Link BibenrateReadonlyRepository}
+   *     described in {@link BibernateReadonlyRepository}
    */
   @SuppressWarnings("unchecked")
   public <E, R extends BibernateReadonlyRepository<E, ?>> R buildRepository(Class<R> repository, Class<E> entityType) {

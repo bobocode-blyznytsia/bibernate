@@ -74,8 +74,8 @@ public class MethodNameToQueryParser {
       builder.lessThan(resolveColumnName(token, "LessThan"));
     } else if (endsWith(token, "MoreThan")) {
       builder.moreThan(resolveColumnName(token, "MoreThan"));
-    }else if (endsWith(token,"Between")){
-      builder.between(resolveColumnName(token,"Between"));
+    } else if (endsWith(token, "Between")) {
+      builder.between(resolveColumnName(token, "Between"));
     } else if (endsWith(token, "Is")) {
       builder.isEqual(resolveColumnName(token, "Is"));
     } else {
