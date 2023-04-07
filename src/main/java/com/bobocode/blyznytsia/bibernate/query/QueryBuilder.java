@@ -39,7 +39,7 @@ public class QueryBuilder {
   }
 
   public QueryBuilder descending() {
-    return addOrderAndReturn("DESCENDING");
+    return addOrderAndReturn("DESC");
   }
 
   public QueryBuilder addWhereAndReturn(String clause) {
