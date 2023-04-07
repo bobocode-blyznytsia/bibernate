@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 import com.bobocode.blyznytsia.bibernate.exception.TransactionException;
+import com.bobocode.blyznytsia.bibernate.session.Session;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionTest {
   @Mock
   private Connection connection;
+  @Mock
+  private Session session;
   @InjectMocks
   public TransactionImpl transaction;
 
@@ -48,6 +51,7 @@ class TransactionTest {
     transaction.begin();
     transaction.commit();
 
+    verify(session).flush();
     verify(connection).commit();
     assertEquals(COMMITTED, transaction.getStatus());
   }

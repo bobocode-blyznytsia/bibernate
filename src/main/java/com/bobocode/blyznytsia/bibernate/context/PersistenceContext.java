@@ -1,6 +1,7 @@
 package com.bobocode.blyznytsia.bibernate.context;
 
 import com.bobocode.blyznytsia.bibernate.model.EntityKey;
+import com.bobocode.blyznytsia.bibernate.persister.EntityPersister;
 import java.util.Map;
 
 /**
@@ -18,6 +19,13 @@ public interface PersistenceContext {
    */
   Map<EntityKey, Object> dirtyCheck();
 
+
+  /**
+   * Performs synchronization of current state of entities in the cache
+   * with their original state.
+   */
+  void flush();
+
   /**
    * Retrieves the entity associated with the given EntityKey from the cache.
    *
@@ -27,7 +35,7 @@ public interface PersistenceContext {
   Object getCachedEntity(EntityKey entityKey);
 
   /**
-   * Adds an entity to the cache.
+   * Adds an entity to the cache. Is used in conjunction with {@link EntityPersister} findOneBy, findById methods
    *
    * @param entityKey The EntityKey used to identify the entity in the cache.
    * @param entity The entity to be added to the cache.
@@ -41,11 +49,29 @@ public interface PersistenceContext {
    */
   void deleteEntityFromCache(EntityKey entityKey);
 
-  // TODO add javadoc
-  void markForDeletion(EntityKey entityKey, Object entity);
+  /**
+   * Marks entity for delete.
+   *
+   * @param entityKey The EntityKey used to identify the entity in the cache.
+   * @param entity The entity to be marked for deletion.
+   */
+  void markForDelete(EntityKey entityKey, Object entity);
 
+  /**
+   * Marks entity for insert.
+   *
+   * @param entityKey The EntityKey used to identify the entity in the cache.
+   * @param entity The entity to be marked for insert.
+   */
   void markForInsert(EntityKey entityKey, Object entity);
 
+  /**
+   * Marks entity for update.
+   *
+   * @param entityKey The EntityKey used to identify the entity in the cache.
+   * @param entity The entity to be marked for update.
+   */
   void markForUpdate(EntityKey entityKey,  Object entity);
+
 }
 

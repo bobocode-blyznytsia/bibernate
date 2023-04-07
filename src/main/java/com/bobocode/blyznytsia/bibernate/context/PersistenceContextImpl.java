@@ -3,7 +3,6 @@ package com.bobocode.blyznytsia.bibernate.context;
 import com.bobocode.blyznytsia.bibernate.model.EntityKey;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,7 +21,14 @@ public class PersistenceContextImpl implements PersistenceContext {
   public Map<EntityKey, Object> dirtyCheck() {
     return entitySnapshots.entrySet().stream()
         .filter(entry -> isEntityDirty(entry.getKey()))
-        .collect(Collectors.toMap(Map.Entry::getKey, entry -> entityCache.get(entry.getKey())));
+        .collect(HashMap::new, (m, v) -> m.put(v.getKey(), entityCache.get(v.getKey())), HashMap::putAll);
+  }
+
+  @Override
+  public void flush() {
+    entityCache.forEach((entityKey, entity) ->
+        this.entitySnapshots.put(entityKey, new EntitySnapshot(entity))
+    );
   }
 
   @Override
@@ -41,30 +47,35 @@ public class PersistenceContextImpl implements PersistenceContext {
 
   @Override
   public void addEntityToCache(EntityKey entityKey, Object entity) {
+    log.debug("Adding entity {} with entity key={} to persistence context", entity.getClass(), entityKey);
     entityCache.put(entityKey, entity);
     entitySnapshots.put(entityKey, new EntitySnapshot(entity));
   }
 
   @Override
   public void deleteEntityFromCache(EntityKey entityKey) {
+    log.debug("Removing entity {} with entity key={} from persistence context", entityKey.getClass(), entityKey);
     entityCache.remove(entityKey);
     entitySnapshots.remove(entityKey);
   }
 
   @Override
-  public void markForDeletion(EntityKey entityKey, Object entity) {
-      entityCache.put(entityKey, null);
-      entitySnapshots.put(entityKey, new EntitySnapshot(entity));
+  public void markForDelete(EntityKey entityKey, Object entity) {
+    log.debug("Marking entity {} with entity key={} for delete", entity.getClass(), entityKey);
+    entityCache.put(entityKey, null);
+    entitySnapshots.put(entityKey, new EntitySnapshot(entity));
   }
 
   @Override
   public void markForInsert(EntityKey entityKey, Object entity) {
+    log.debug("Marking entity {} with entity key={} for insert", entity.getClass(), entityKey);
     entityCache.put(entityKey, entity);
     entitySnapshots.put(entityKey, null);
   }
 
   @Override
   public void markForUpdate(EntityKey entityKey,  Object entity) {
+    log.debug("Marking entity {} with entity key={} for update", entity.getClass(), entityKey);
     if (!entityCache.containsKey(entityKey)) {
       markForInsert(entityKey, entity);
     }
