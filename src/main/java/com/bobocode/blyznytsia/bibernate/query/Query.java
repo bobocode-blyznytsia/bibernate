@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * The interface provides a comprehensive api to retrieve an entity using native queries
+ * The interface provides a comprehensive API to retrieve an entity using native queries
  *
  * @param <T> the type of the entity
  */
@@ -44,4 +44,11 @@ public interface Query<T> {
    * @throws MissingParamsException if any of the query parameters were not set
    */
   List<T> getResultList();
+
+  /**
+   * Returns total amount of parameters of query
+   *
+   * @return count of parameters
+   */
+  int getParamsCount();
 }
