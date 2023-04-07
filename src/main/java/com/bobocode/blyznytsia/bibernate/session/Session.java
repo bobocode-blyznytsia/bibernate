@@ -9,6 +9,8 @@ public interface Session {
 
   <T> T find(Class<T> entityClass, Object primaryKey);
 
+  <T> T findOneBy(Class<T> entityClass, String key, Object value);
+
   void flush();
 
   void close();

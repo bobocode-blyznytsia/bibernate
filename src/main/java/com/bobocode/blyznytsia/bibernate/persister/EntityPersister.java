@@ -73,12 +73,12 @@ public interface EntityPersister {
    *
    * @param entity the entity to update.
    */
-  void update(Object entity);
+  <T> void update(T entity);
 
   /**
    * Deletes an entity from the database.
    *
    * @param entity the entity to delete.
    */
-  void delete(Object entity);
+  <T> void delete(T entity);
 }
