@@ -35,10 +35,10 @@ SessionFactory sessionFactory;
     when(sessionFactory.openSession()).thenReturn(session);
     var repoBuilder = new RepositoryBuilder(sessionFactory);
     var repoProxy = repoBuilder.buildRepository(SampleRepository.class, SampleEntity.class);
-    System.out.println(repoProxy.FindByIdOrIdOrIdOrderByIdDesc(1L,3L,2L));
+    System.out.println(repoProxy.findAllByIdOrIdOrIdOrderByIdDesc(1L,3L,2L));
   }
 
   private interface SampleRepository extends BibernateReadonlyRepository<SampleEntity, Long> {
-    List<SampleEntity> FindByIdOrIdOrIdOrderByIdDesc(Long id1, Long id2, Long id3);
+    List<SampleEntity> findAllByIdOrIdOrIdOrderByIdDesc(Long id1, Long id2, Long id3);
   }
 }

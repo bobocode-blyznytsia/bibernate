@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @DisplayNameGeneration(CamelCaseNameGenerator.class)
 class MethodNameToQueryParserTest {
   @ParameterizedTest
-  @MethodSource("com.bobocode.blyznytsia.bibernate.query.MethodQueryGeneratorTest#testData")
+  @MethodSource("com.bobocode.blyznytsia.bibernate.query.MethodNameToQueryParserTest#testData")
   void buildsQueryFromMethodName(Map.Entry<String,String> entry) {
     assertEquals(entry.getValue(), new MethodNameToQueryParser(Person.class).generateQueryByName(entry.getKey()));
   }
@@ -21,35 +21,35 @@ class MethodNameToQueryParserTest {
 
   static Set<Map.Entry<String, String>> testData(){
     return Map.of(
-        "findByName",
+        "findOneByName",
         "SELECT * FROM person WHERE name = ?1",
 
-        "findByNameIs",
+        "findOneByNameIs",
         "SELECT * FROM person WHERE name = ?1",
 
-        "findByNameEquals",
+        "findOneByNameEquals",
         "SELECT * FROM person WHERE name = ?1",
 
-        "findByNameAndStatus",
+        "findOneByNameAndStatus",
         "SELECT * FROM person WHERE name = ?1 AND status = ?2",
 
-        "findByNameOrStatus",
+        "findOneByNameOrStatus",
         "SELECT * FROM person WHERE name = ?1 OR status = ?2",
 
-        "findByNameIsNull",
+        "findAllByNameIsNull",
         "SELECT * FROM person WHERE name IS NOT NULL",
 
-        "findByNameIsNotNull",
+        "findAllByNameIsNotNull",
         "SELECT * FROM person WHERE name IS NOT NULL",
 
-        "findByNameNull",
+        "findAllByNameNull",
         "SELECT * FROM person WHERE name IS NOT NULL",
 
-        "findByNameNotNull",
+        "findAllByNameNotNull",
         "SELECT * FROM person WHERE name IS NOT NULL",
 
-        "findByNameOrderByStatusDesc",
-        "SELECT * FROM person WHERE name = ?1 ORDER BY status DESCENDING"
+        "findAllByNameOrderByStatusDesc",
+        "SELECT * FROM person WHERE name = ?1 ORDER BY status DESC"
     ).entrySet();
   }
 

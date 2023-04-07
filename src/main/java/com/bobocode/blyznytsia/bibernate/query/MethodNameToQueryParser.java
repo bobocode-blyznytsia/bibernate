@@ -24,7 +24,7 @@ public class MethodNameToQueryParser {
   }
 
   public String generateQueryByName(String methodName) {
-    var strWithoutFindBy = methodName.substring(6);
+    var strWithoutFindBy = methodName.substring(9);
     var tokens = strWithoutFindBy.split("OrderBy");
     var queryBuilder = new QueryBuilder(resolveEntityTableName(entityType));
     parseWhereTokens(tokens[WHERE_CLAUSE_POS], queryBuilder);

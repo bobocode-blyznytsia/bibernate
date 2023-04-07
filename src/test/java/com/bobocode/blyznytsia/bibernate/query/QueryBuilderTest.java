@@ -41,7 +41,7 @@ class QueryBuilderTest {
     queryBuilder
         .orderBy("age")
         .descending();
-    var expectedSqlQuery = "SELECT * FROM users ORDER BY age DESCENDING";
+    var expectedSqlQuery = "SELECT * FROM users ORDER BY age DESC";
     var actualSqlQuery = queryBuilder.buildNativeSqlQuery();
     assertEquals(expectedSqlQuery, actualSqlQuery);
   }
@@ -56,7 +56,7 @@ class QueryBuilderTest {
         .isEqual("country")
         .orderBy("age")
         .descending();
-    var expectedSqlQuery = "SELECT * FROM users WHERE age = ?1 AND email IS NOT NULL OR country = ?2 ORDER BY age DESCENDING";
+    var expectedSqlQuery = "SELECT * FROM users WHERE age = ?1 AND email IS NOT NULL OR country = ?2 ORDER BY age DESC";
     var actualSqlQuery = queryBuilder.buildNativeSqlQuery();
     assertEquals(expectedSqlQuery, actualSqlQuery);
   }
