@@ -18,8 +18,7 @@ class MethodNameToQueryParserTest {
     assertEquals(entry.getValue(), new MethodNameToQueryParser(Person.class).generateQueryByName(entry.getKey()));
   }
 
-
-  static Set<Map.Entry<String, String>> testData(){
+  private static Set<Map.Entry<String, String>> testData(){
     return Map.of(
         "findOneByName",
         "SELECT * FROM person WHERE name = ?1",

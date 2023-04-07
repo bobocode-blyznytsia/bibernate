@@ -33,14 +33,13 @@ class RepositoryBuilderITTest {
   private static final String BAD_METHOD_NAMING_OR_RETURN_EXCEPTION_TEXT = "Invalid method declaration: "
       + "make sure the method name align with convention and the return type is supported";
   private static final String COUNT_OF_PARAM_DOES_NOT_MATCH_EXCEPTION_TEXT = "Count of method parameters " +
-      "does not matches count method arguments. Expected: 2, actual: 1";
+      "does not match count method arguments. Expected: 2, actual: 1";
 
-
-  static Connection connection;
-  Session session;
+  private static Connection connection;
+  private  Session session;
   @Mock
-  SessionFactory sessionFactory;
-  SampleRepository generatedRepo;
+  private  SessionFactory sessionFactory;
+  private  SampleRepository generatedRepo;
 
   @BeforeAll
   static void getConnectionWithInitData() throws SQLException {
@@ -56,7 +55,6 @@ class RepositoryBuilderITTest {
     var repositoryBuilder = new RepositoryBuilder(sessionFactory);
     generatedRepo = repositoryBuilder.buildRepository(SampleRepository.class, SampleEntity.class);
   }
-
 
   @Test
   void generatesMethodProperly() {

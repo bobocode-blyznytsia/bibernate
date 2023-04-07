@@ -4,21 +4,21 @@ import com.bobocode.blyznytsia.bibernate.session.SessionFactory;
 import java.lang.reflect.Proxy;
 
 /**
- * Class for {@See BibernateReadonlyRepository} repositories generation
+ * Class for {@see BibernateReadonlyRepository} repositories generation
  */
 public class RepositoryBuilder {
-  SessionFactory sessionFactory;
+  private final SessionFactory sessionFactory;
 
   public RepositoryBuilder(SessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
   }
 
   /**
-   * Generate dymanic proxy implementation for repository R handling entity E
+   * Generate dynamic proxy implementation for repository R handling entity E
    *
-   * @param repository - Intefrace extending  {@link BibernateReadonlyRepository}
+   * @param repository - interface extending  {@link BibernateReadonlyRepository}
    * @param entityType - the type of entity to be operated within the generated repository
-   * @return an instance of repository R implementing all the methods folowing convention
+   * @return an instance of repository R implementing all the methods following convention
    *     described in {@link BibernateReadonlyRepository}
    */
   @SuppressWarnings("unchecked")

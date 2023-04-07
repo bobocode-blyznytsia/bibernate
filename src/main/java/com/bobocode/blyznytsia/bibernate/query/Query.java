@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * The interface provides a comprehensive api to retrieve an entity using native queries
+ * The interface provides a comprehensive API to retrieve an entity using native queries
  *
  * @param <T> the type of the entity
  */

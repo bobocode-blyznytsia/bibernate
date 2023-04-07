@@ -18,8 +18,8 @@ public class TypedQuery<T> implements Query<T> {
   private final String jdbcQuery;
   private final Class<T> entityType;
   private Object[] params;
-  Map<String, Integer> namedParamToPosition;
-  Map<Integer, Integer> ordinalParamToPosition;
+  private Map<String, Integer> namedParamToPosition;
+  private Map<Integer, Integer> ordinalParamToPosition;
 
   public TypedQuery(Class<T> entityType, String query, EntityPersister entityPersister) {
     this.entityPersister = entityPersister;
@@ -96,6 +96,5 @@ public class TypedQuery<T> implements Query<T> {
     log.debug("Query compiled: {}", compiledQuery);
     return compiledQuery;
   }
-
 
 }

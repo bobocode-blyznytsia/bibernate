@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MethodNameToQueryParser {
   private static final int WHERE_CLAUSE_POS = 0;
   private static final int ORDER_BY_CLAUSE_POS = 1;
-  Class<?> entityType;
+  private final Class<?> entityType;
 
   public MethodNameToQueryParser(Class<?> entityType) {
     this.entityType = entityType;

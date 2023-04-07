@@ -61,5 +61,4 @@ class QueryBuilderTest {
     assertEquals(expectedSqlQuery, actualSqlQuery);
   }
 
-
 }

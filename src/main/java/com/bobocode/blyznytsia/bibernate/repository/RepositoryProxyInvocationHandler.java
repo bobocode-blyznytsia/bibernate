@@ -56,7 +56,7 @@ public class RepositoryProxyInvocationHandler<T> implements InvocationHandler {
     var query = session.createNativeQuery(sqlQueryText, entityType);
     if (params.length != query.getParamsCount()) {
       throw new RepositoryException(
-          "Count of method parameters does not matches count method arguments. Expected: %d, actual: %d".formatted(
+          "Count of method parameters does not match count method arguments. Expected: %d, actual: %d".formatted(
               query.getParamsCount(),
               params.length));
     }
