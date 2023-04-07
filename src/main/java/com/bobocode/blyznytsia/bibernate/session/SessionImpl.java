@@ -185,6 +185,9 @@ public class SessionImpl implements Session {
 		this.persistenceContext.markForUpdate(new EntityKey(entity.getClass(), entityIdValue), entity);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T> Query<T> createNativeQuery(String sql, Class<T> entityType) {
 		return new TypedQuery<>(entityType, sql, entityPersister);

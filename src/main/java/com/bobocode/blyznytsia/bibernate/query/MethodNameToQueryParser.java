@@ -66,17 +66,29 @@ public class MethodNameToQueryParser {
       builder.and();
     } else if (token.equals("Or")) {
       builder.or();
-    } else if (token.endsWith("IsNotNull") || token.endsWith("NotNull")) {
-      builder.isNotNull(resolveColumnName(token, "(IsNotNull|NotNull)"));
-    } else if (token.endsWith("IsNull") || token.endsWith("Null")) {
-      builder.isNotNull(resolveColumnName(token, "(IsNull|Null)"));
+    } else if (endsWith(token, "NotNull")) {
+      builder.isNotNull(resolveColumnName(token, "NotNull"));
+    } else if (endsWith(token, "Null")) {
+      builder.isNull(resolveColumnName(token, "Null"));
+    } else if (endsWith(token, "LessThan")) {
+      builder.lessThan(resolveColumnName(token, "LessThan"));
+    } else if (endsWith(token, "MoreThan")) {
+      builder.moreThan(resolveColumnName(token, "MoreThan"));
+    }else if (endsWith(token,"Between")){
+      builder.between(resolveColumnName(token,"Between"));
+    } else if (endsWith(token, "Is")) {
+      builder.isEqual(resolveColumnName(token, "Is"));
     } else {
-      builder.isEqual(resolveColumnName(token, "(Is|Equals)"));
+      builder.isEqual(resolveColumnName(token, "Equals"));
     }
   }
 
+  private boolean endsWith(String token, String value) {
+    return token.endsWith(value) || token.endsWith("Is" + value);
+  }
 
-  private String resolveColumnName(String token, String keywordPattern) {
+  private String resolveColumnName(String token, String keyword) {
+    var keywordPattern = "(%s|Is%s)".formatted(keyword, keyword);
     var tokenWithoutKeyword = token.split(keywordPattern)[0];
     var fieldName = decapitalize(tokenWithoutKeyword);
     try {

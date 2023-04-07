@@ -37,13 +37,13 @@ class MethodNameToQueryParserTest {
         "SELECT * FROM person WHERE name = ?1 OR status = ?2",
 
         "findAllByNameIsNull",
-        "SELECT * FROM person WHERE name IS NOT NULL",
+        "SELECT * FROM person WHERE name IS NULL",
 
         "findAllByNameIsNotNull",
         "SELECT * FROM person WHERE name IS NOT NULL",
 
         "findAllByNameNull",
-        "SELECT * FROM person WHERE name IS NOT NULL",
+        "SELECT * FROM person WHERE name IS NULL",
 
         "findAllByNameNotNull",
         "SELECT * FROM person WHERE name IS NOT NULL",

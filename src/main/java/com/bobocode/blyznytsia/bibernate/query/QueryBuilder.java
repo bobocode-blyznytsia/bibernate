@@ -15,7 +15,7 @@ public class QueryBuilder {
   }
 
   public QueryBuilder isEqual(String columnName) {
-    return addWhereAndReturn(columnName + " = ?" + ordinalParamIdx++);
+    return addWhereAndReturn(columnName + " = " + nextOrdinalParam());
   }
 
   public QueryBuilder and() {
@@ -32,6 +32,19 @@ public class QueryBuilder {
 
   public QueryBuilder isNotNull(String columnName) {
     return addWhereAndReturn(columnName + " IS NOT NULL");
+  }
+
+  public QueryBuilder lessThan(String columnName) {
+    return addWhereAndReturn(columnName + " < " + nextOrdinalParam());
+  }
+
+  public QueryBuilder moreThan(String columnName) {
+    return addWhereAndReturn(columnName + " > " + nextOrdinalParam());
+  }
+
+  public QueryBuilder between(String columnName) {
+    return addWhereAndReturn(
+        "(" + columnName + " > " + nextOrdinalParam() + " AND " + columnName + " < " + nextOrdinalParam() + ")");
   }
 
   public QueryBuilder orderBy(String columnName) {
@@ -68,4 +81,7 @@ public class QueryBuilder {
     return queryBuilder.toString();
   }
 
+  private String nextOrdinalParam() {
+    return "?" + (ordinalParamIdx++);
+  }
 }
