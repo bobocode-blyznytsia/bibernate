@@ -70,7 +70,7 @@ persistenceUnits:
   - name: h2
     dataSource:
       jdbcUrl: jdbc:h2:mem:testdb
-      username: sa
+      userName: sa
       password: password
       driverClassName: org.h2.Driver
 ```
