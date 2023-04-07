@@ -30,7 +30,7 @@ public class RepositoryProxyInvocationHandler<T> implements InvocationHandler {
     var session = sessionFactory.openSession();
     var query = buildNativeQuery(sqlQueryBuilder.generateQueryByName(method.getName()), session, params);
     Object result;
-    if (method.getName().startsWith("finOneBy")) {
+    if (method.getName().startsWith("findOneBy")) {
       result = query.getSingleResult();
     } else {
       result = query.getResultList();
@@ -55,7 +55,10 @@ public class RepositoryProxyInvocationHandler<T> implements InvocationHandler {
   private Query<T> buildNativeQuery(String sqlQueryText, Session session, Object[] params) {
     var query = session.createNativeQuery(sqlQueryText, entityType);
     if (params.length != query.getParamsCount()) {
-      throw new RepositoryException("Count of method parameters does not matches count method arguments");
+      throw new RepositoryException(
+          "Count of method parameters does not matches count method arguments. Expected: %d, actual: %d".formatted(
+              query.getParamsCount(),
+              params.length));
     }
     for (var i = 0; i < params.length; i++) {
       query.setParam(i + 1, params[i]);
