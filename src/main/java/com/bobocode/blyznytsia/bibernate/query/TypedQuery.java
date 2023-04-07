@@ -60,7 +60,7 @@ public class TypedQuery<T> implements Query<T> {
   }
 
   @Override
-  public int getParamsCount(){
+  public int getParamsCount() {
     return params.length;
   }
 

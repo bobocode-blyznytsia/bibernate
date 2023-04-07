@@ -11,12 +11,12 @@ public class RepositoryBuilder {
   }
 
   @SuppressWarnings("unchecked")
-  public <E, R extends BibernateReadonlyRepository<E, ?>> R buildRepository(Class<R> repository, Class<E> entityType){
+  public <E, R extends BibernateReadonlyRepository<E, ?>> R buildRepository(Class<R> repository, Class<E> entityType) {
     return (R) Proxy.newProxyInstance(
-         repository.getClassLoader(),
-         new Class[]{repository},
-         new RepositoryProxyInvocationHandler<>(entityType, sessionFactory)
-     );
+        repository.getClassLoader(),
+        new Class[] {repository},
+        new RepositoryProxyInvocationHandler<>(entityType, sessionFactory)
+    );
   }
 
 }
